@@ -1,0 +1,2863 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07111f">
+  <meta name="description" content="literalsineos - your home for games, music, and more.">
+  <title>Home - literalsineos</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      --bg: #07111f;
+      --panel: #0a1728;
+      --panel-soft: #0c1c30;
+      --line: #183654;
+      --line-bright: #24527a;
+      --text: #e8f2ff;
+      --muted: #8aa8c8;
+      --dim: #5d7c9f;
+      --blue: #42d4dc;
+      --cyan: #80f0d0;
+      --lime: #a4ed70;
+      --stage-glow-a: rgba(35, 182, 180, .25);
+      --stage-glow-b: rgba(66, 157, 103, .14);
+      --rail-width: 224px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body[data-theme="violet"] {
+      --blue: #a58bff;
+      --cyan: #c9a7ff;
+      --lime: #ff9fdb;
+      --stage-glow-a: rgba(122, 80, 196, .26);
+      --stage-glow-b: rgba(81, 57, 141, .18);
+    }
+
+    body[data-theme="ember"] {
+      --blue: #ffad68;
+      --cyan: #ffd18a;
+      --lime: #ff8e79;
+      --stage-glow-a: rgba(190, 94, 58, .24);
+      --stage-glow-b: rgba(153, 72, 50, .17);
+    }
+
+    body[data-theme="forest"] {
+      --blue: #72df9b;
+      --cyan: #a2ed9b;
+      --lime: #dcf17a;
+      --stage-glow-a: rgba(47, 150, 88, .24);
+      --stage-glow-b: rgba(73, 132, 66, .18);
+    }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      overflow-x: hidden;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button, input { font: inherit; }
+    button { color: inherit; }
+
+    .app-shell { min-height: 100vh; }
+
+    .sidebar {
+      position: fixed;
+      z-index: 5;
+      inset: 0 auto 0 0;
+      display: flex;
+      width: var(--rail-width);
+      flex-direction: column;
+      border-right: 1px solid var(--line);
+      background: rgba(8, 19, 33, .97);
+    }
+
+    body.sidebar-hidden .sidebar { display: none; }
+    body.sidebar-hidden .workspace { margin-left: 0; }
+    body.compact-layout .shortcut { min-height: 60px; padding-top: 9px; padding-bottom: 9px; }
+    body.compact-layout .shortcut-grid { gap: 8px; }
+    body.compact-layout .dashboard { padding-top: 42px; }
+
+    .brand {
+      display: flex;
+      height: 66px;
+      align-items: center;
+      gap: 11px;
+      padding: 0 21px;
+      border-bottom: 1px solid var(--line);
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 750;
+      letter-spacing: -.035em;
+      text-decoration: none;
+    }
+
+    .brand-name span, .hero-wordmark span { color: var(--cyan); }
+
+    .dragon-mark {
+      display: grid;
+      width: 29px;
+      height: 29px;
+      flex: 0 0 auto;
+      place-items: center;
+      filter: drop-shadow(0 0 11px rgba(70, 224, 220, .42));
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .signup-button {
+      display: flex;
+      min-height: 38px;
+      align-items: center;
+      gap: 9px;
+      margin: 11px 12px 0;
+      padding: 0 12px;
+      border: 1px solid rgba(90, 225, 214, .42);
+      border-radius: 9px;
+      background: linear-gradient(110deg, rgba(43, 177, 175, .28), rgba(48, 115, 111, .2));
+      box-shadow: inset 0 1px rgba(218, 241, 255, .06);
+      color: #d7edff;
+      font-size: 11px;
+      font-weight: 750;
+      text-decoration: none;
+      transition: border-color .18s ease, background .18s ease;
+    }
+
+    .signup-button svg { width: 16px; height: 16px; color: var(--cyan); }
+    .signup-button:hover { border-color: var(--cyan); background: rgba(43, 177, 175, .35); }
+    .signup-button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+    .nav-list {
+      display: grid;
+      gap: 5px;
+      margin: 0;
+      padding: 17px 10px;
+      list-style: none;
+    }
+
+    .nav-link {
+      display: flex;
+      min-height: 43px;
+      align-items: center;
+      gap: 13px;
+      padding: 0 12px;
+      border: 1px solid transparent;
+      border-radius: 9px;
+      color: #a7bfd8;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background .18s ease, color .18s ease, border-color .18s ease;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      border-color: rgba(81, 154, 223, .12);
+      background: #103039;
+      color: #e9f5ff;
+    }
+
+    .nav-link.active { box-shadow: inset 2px 0 0 var(--blue); }
+    .nav-icon { width: 19px; height: 19px; color: #8eb6d9; }
+    .nav-icon, .shortcut-icon, .search-icon {
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.8;
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding: 14px 10px 20px;
+      border-top: 1px solid var(--line);
+    }
+
+    .sidebar-bottom .nav-list { padding: 0; }
+    .sync-note {
+      margin: 14px 5px 0;
+      padding: 15px 7px 0;
+      border-top: 1px solid var(--line);
+      color: var(--dim);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .workspace {
+      min-height: 100vh;
+      margin-left: var(--rail-width);
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      height: 66px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(22px, 5vw, 66px);
+      border-bottom: 1px solid var(--line);
+      background: rgba(7, 17, 31, .75);
+      color: #90a9c5;
+      font-size: 12px;
+    }
+
+    .breadcrumb { display: flex; align-items: center; gap: 8px; }
+    .breadcrumb strong { color: #dceaff; font-weight: 650; }
+    .crumb-slash { color: #405c79; }
+    .topbar-status { display: flex; align-items: center; gap: 8px; color: var(--dim); }
+    .topbar-actions { display: flex; align-items: center; gap: 12px; }
+    .nav-toggle {
+      min-height: 31px;
+      padding: 0 10px;
+      border: 1px solid #28545b;
+      border-radius: 8px;
+      background: rgba(12, 35, 42, .84);
+      color: #a6d9d3;
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .nav-toggle:hover { border-color: var(--cyan); color: #e6fff7; }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--lime);
+      box-shadow: 0 0 10px rgba(164, 237, 112, .75);
+    }
+
+    .main-stage {
+      position: relative;
+      isolation: isolate;
+      min-height: calc(100vh - 66px);
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 78% 12%, var(--stage-glow-a), transparent 37%),
+        radial-gradient(ellipse at 18% 83%, var(--stage-glow-b), transparent 42%),
+        linear-gradient(118deg, #0b202b 0%, #091923 48%, #07111f 100%);
+      background-size: 135% 135%, 135% 135%, 100% 100%;
+      animation: background-aurora 28s ease-in-out infinite alternate;
+    }
+
+    .main-stage::before, .main-stage::after {
+      position: absolute;
+      z-index: -1;
+      inset: -35% 0;
+      background: repeating-linear-gradient(119deg,
+        transparent 0 15%, rgba(77, 220, 207, .03) 15.1% 15.45%,
+        rgba(109, 241, 209, .07) 15.55% 15.8%, transparent 16% 28%);
+      content: "";
+      pointer-events: none;
+    }
+
+    .main-stage::before {
+      animation: background-streak-drift 32s ease-in-out infinite alternate;
+      will-change: transform;
+    }
+
+    .main-stage::after {
+      inset: -20% 0;
+      background: linear-gradient(112deg, transparent 26%, rgba(78, 220, 209, .045) 29%, transparent 31% 57%, rgba(78, 220, 209, .045) 59%, transparent 62%);
+      filter: blur(9px);
+      animation: background-glow-pulse 12s ease-in-out infinite alternate;
+      will-change: opacity, transform;
+    }
+
+    @keyframes background-aurora {
+      from { background-position: 100% 0%, 0% 100%, 0 0; }
+      to { background-position: 78% 18%, 22% 78%, 0 0; }
+    }
+
+    @keyframes background-streak-drift {
+      from { transform: translate3d(-1.5%, -1%, 0); }
+      to { transform: translate3d(1.5%, 1%, 0); }
+    }
+
+    @keyframes background-glow-pulse {
+      from { opacity: .48; transform: translate3d(-1%, 0, 0) scale(1); }
+      to { opacity: .9; transform: translate3d(1%, 0, 0) scale(1.025); }
+    }
+
+    .dashboard {
+      width: min(100% - 48px, 780px);
+      margin: 0 auto;
+      padding: clamp(54px, 8vh, 87px) 0 42px;
+    }
+
+    .hero { margin-bottom: 39px; }
+
+    .hero-wordmark {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 0 0 23px;
+      color: #dceeff;
+      font-size: 25px;
+      font-weight: 720;
+      letter-spacing: -.05em;
+    }
+
+    .hero-wordmark .dragon-mark { width: 53px; height: 53px; font-size: 43px; }
+
+    .date-label {
+      margin-bottom: 12px;
+      color: #7e9fbe;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      color: #f0f6ff;
+      font-size: clamp(35px, 5.2vw, 47px);
+      font-weight: 760;
+      letter-spacing: -.055em;
+      line-height: 1.12;
+    }
+
+    .hero-copy { margin: 10px 0 0; color: #a8c0d8; font-size: 13px; }
+
+    .search-form {
+      display: flex;
+      height: 62px;
+      align-items: center;
+      gap: 12px;
+      padding: 7px 8px 7px 19px;
+      border: 1px solid #24565e;
+      border-radius: 17px;
+      background: rgba(8, 20, 35, .88);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, .13), inset 0 1px rgba(255,255,255,.025);
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .search-form:focus-within {
+      border-color: #41bec1;
+      box-shadow: 0 0 0 3px rgba(66, 212, 220, .12), 0 12px 35px rgba(0, 0, 0, .13);
+    }
+
+    .search-icon { width: 19px; height: 19px; flex: 0 0 auto; color: #789cbe; }
+    .search-input {
+      width: 100%;
+      min-width: 0;
+      height: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .search-input::placeholder { color: #7894b2; opacity: 1; }
+    .search-button {
+      min-width: 54px;
+      height: 38px;
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #5de3d5, #9bea75);
+      color: #061324;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 750;
+      box-shadow: 0 4px 18px rgba(69, 206, 174, .24);
+      transition: filter .2s ease, transform .2s ease;
+    }
+
+    .search-button:hover { filter: brightness(1.12); transform: translateY(-1px); }
+
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin: 47px 0 11px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      color: #d5e5f7;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .035em;
+    }
+
+    .section-heading span { color: #83b9aa; font-size: 10px; }
+
+    .shortcut-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: 22px;
+    }
+
+    .shortcut {
+      display: flex;
+      min-height: 69px;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 11px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      color: inherit;
+      text-decoration: none;
+      transition: background .18s ease, border-color .18s ease, transform .18s ease;
+    }
+
+    .shortcut:hover {
+      transform: translateY(-2px);
+      border-color: rgba(95, 226, 209, .22);
+      background: rgba(22, 61, 65, .56);
+    }
+
+    .shortcut-icon { width: 20px; height: 20px; flex: 0 0 auto; color: #73c7bd; }
+    .shortcut-copy { min-width: 0; }
+    .shortcut-title { display: block; color: #e1edfc; font-size: 12px; font-weight: 680; }
+    .shortcut-description {
+      display: block;
+      overflow: hidden;
+      margin-top: 4px;
+      color: #7f9bb9;
+      font-size: 10px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .dashboard-footer {
+      display: flex;
+      align-items: center;
+      gap: 23px;
+      margin-top: 41px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(47, 86, 125, .6);
+      color: #7895b4;
+      font-size: 10px;
+    }
+
+    .dashboard-footer a { color: inherit; text-decoration: none; }
+    .dashboard-footer a:hover { color: #c4e3ff; }
+    .footer-brand { color: #70b8ff !important; font-weight: 700; }
+
+    .page-view {
+      display: none;
+      min-height: 560px;
+      padding: clamp(68px, 12vh, 130px) 0 50px;
+    }
+
+    .page-view.visible { display: block; }
+    .page-view .date-label { margin-bottom: 14px; }
+    .page-view p { max-width: 530px; color: #a8c0d8; font-size: 14px; line-height: 1.7; }
+    .page-view .back-link {
+      display: inline-flex;
+      margin-top: 23px;
+      color: #80bdff;
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .page-view .back-link:hover { color: #c2e6ff; }
+
+    .page-title-row {
+      display: flex;
+      max-width: 640px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .page-title-row h1 { min-width: 0; }
+    .page-title-row .add-game-button { flex: 0 0 auto; height: 40px; }
+    .page-title-row [hidden], .game-form-panel[hidden], .game-image-preview[hidden], .music-library[hidden], .ai-panel[hidden], .friends-panel[hidden], .soundtrack-dock[hidden] { display: none; }
+    .game-library, .music-library { max-width: 640px; margin-top: 24px; }
+
+    .add-game-form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: end;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid rgba(57, 110, 159, .5);
+      border-radius: 12px;
+      background: rgba(8, 20, 35, .65);
+    }
+
+    .game-field { display: grid; gap: 7px; color: #9ab4ce; font-size: 11px; }
+    .game-field input {
+      width: 100%;
+      height: 39px;
+      padding: 0 11px;
+      border: 1px solid #234362;
+      border-radius: 8px;
+      outline: 0;
+      background: #091728;
+      color: var(--text);
+      font-size: 12px;
+    }
+
+    .game-field input:focus { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(69, 161, 255, .12); }
+    .game-field input::placeholder { color: #65809e; }
+    .game-field input[type="file"] { height: auto; min-height: 39px; padding: 6px; color: #9ab4ce; font-size: 10px; }
+    .game-field .game-image-note { color: #7897b6; font-size: 9px; font-weight: 400; line-height: 1.4; }
+    .game-field input[type="file"]::file-selector-button {
+      min-height: 25px;
+      margin-right: 7px;
+      padding: 0 8px;
+      border: 1px solid #315773;
+      border-radius: 6px;
+      background: #10243a;
+      color: #c2d8ec;
+      cursor: pointer;
+    }
+
+    .add-game-button {
+      height: 39px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 8px;
+      background: #328ff0;
+      color: #061324;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .add-game-button:hover { background: #55a9ff; }
+    .page-view .game-status { min-height: 18px; margin: 9px 2px 0; color: #84a7c7; font-size: 11px; }
+
+    .game-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .game-card {
+      display: flex;
+      min-height: 88px;
+      align-items: center;
+      gap: 11px;
+      padding: 12px;
+      border: 1px solid rgba(47, 86, 125, .7);
+      border-radius: 10px;
+      background: rgba(12, 28, 48, .82);
+    }
+
+    .game-card-icon { display: grid; width: 34px; height: 34px; flex: 0 0 auto; place-items: center; border-radius: 9px; background: rgba(69, 161, 255, .12); color: #65b5ff; font-size: 15px; }
+    .game-cover { width: 64px; height: 64px; flex: 0 0 auto; border: 1px solid rgba(126, 201, 231, .28); border-radius: 8px; background: #091728; object-fit: cover; }
+    .game-image-preview { display: flex; align-items: center; gap: 10px; margin: 10px 2px 0; color: #9ab4ce; font-size: 10px; }
+    .game-image-preview img { width: 60px; height: 60px; border: 1px solid rgba(126, 201, 231, .28); border-radius: 8px; background: #091728; object-fit: cover; }
+    .game-image-preview-copy { display: grid; gap: 7px; }
+    .remove-game-image { justify-self: start; padding: 0; border: 0; background: transparent; color: #85bde7; cursor: pointer; font-size: 10px; }
+    .remove-game-image:hover { color: #d3ecff; }
+    .add-game-form .add-game-button:disabled { cursor: wait; opacity: .62; }
+    .game-card-copy { min-width: 0; flex: 1; }
+    .game-card-title { overflow: hidden; color: #e3efff; font-size: 12px; font-weight: 680; text-overflow: ellipsis; white-space: nowrap; }
+    .game-card-action { display: inline-block; margin-top: 5px; color: #79baff; font-size: 10px; text-decoration: none; }
+    .game-card-action:hover { color: #c4e3ff; }
+
+    .remove-game-button {
+      width: 28px;
+      height: 28px;
+      flex: 0 0 auto;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: #7993ad;
+      cursor: pointer;
+      font-size: 17px;
+    }
+
+    .remove-game-button:hover { background: rgba(242, 99, 110, .12); color: #ff9a9f; }
+
+    .music-library { margin-top: 28px; }
+    .music-search-form { display: flex; gap: 9px; }
+    .music-recommendations, .music-search-results, .music-playlist-section { margin-top: 22px; }
+    .music-section-heading { margin: 0 0 8px; color: #dceaff; font-size: 13px; font-weight: 700; }
+    .music-recommendations > .music-status, .music-search-results > .music-status { margin-top: 4px; }
+    .music-search-form input {
+      width: 100%;
+      min-width: 0;
+      height: 44px;
+      padding: 0 13px;
+      border: 1px solid #234362;
+      border-radius: 9px;
+      outline: 0;
+      background: rgba(8, 20, 35, .9);
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .music-search-form input:focus { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(69, 161, 255, .12); }
+    .music-search-form input::placeholder { color: #7894b2; }
+    .music-search-form button {
+      flex: 0 0 auto;
+      min-width: 84px;
+      border: 0;
+      border-radius: 9px;
+      background: #328ff0;
+      color: #061324;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .music-search-form button:hover { background: #55a9ff; }
+    .music-search-form button:disabled { cursor: wait; opacity: .65; }
+    .music-note { margin: 10px 0 14px !important; color: #7f9bb9 !important; font-size: 11px !important; }
+    .page-view .music-status { min-height: 18px; margin: 10px 0; color: #84a7c7; font-size: 12px; }
+
+    .music-results { display: grid; gap: 8px; }
+    .music-track {
+      display: flex;
+      min-height: 68px;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 11px;
+      border: 1px solid rgba(47, 86, 125, .58);
+      border-radius: 10px;
+      background: rgba(12, 28, 48, .72);
+    }
+
+    .music-artwork { width: 46px; height: 46px; flex: 0 0 auto; border-radius: 6px; background: #142a40; object-fit: cover; }
+    .music-track-info { min-width: 0; flex: 1; }
+    .music-track-name { overflow: hidden; color: #e3efff; font-size: 12px; font-weight: 680; text-overflow: ellipsis; white-space: nowrap; }
+    .music-track-meta { overflow: hidden; margin-top: 4px; color: #86a1be; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+    .music-track-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 9px; }
+    .music-track-actions button, .music-track-actions a { border: 0; background: transparent; color: #82beff; cursor: pointer; font-size: 11px; text-decoration: none; white-space: nowrap; }
+    .music-track-actions .music-play-button { padding: 7px 9px; border: 1px solid rgba(69, 161, 255, .25); border-radius: 7px; background: rgba(69, 161, 255, .12); color: #a9d8ff; font-weight: 700; }
+    .music-track-actions button:hover, .music-track-actions a:hover { color: #c4e3ff; }
+    .music-track-actions button:disabled { color: #6886a5; cursor: not-allowed; }
+    .music-track-actions .like-track-button.is-liked { color: #ff91ac; }
+    .music-track-actions .add-track-button { color: #9dc8f0; }
+    .playlist-create-form { display: flex; gap: 9px; margin: 12px 0; }
+    .playlist-create-form input, .playlist-create-form button, .playlist-target-select {
+      min-height: 38px;
+      border: 1px solid #294969;
+      border-radius: 8px;
+      background: rgba(8, 20, 35, .9);
+      color: var(--text);
+      font: inherit;
+      font-size: 11px;
+    }
+    .playlist-create-form input { width: min(260px, 100%); padding: 0 11px; }
+    .playlist-create-form button { padding: 0 13px; background: #10243a; cursor: pointer; font-weight: 700; }
+    .playlist-create-form button:hover { border-color: #3a78ad; }
+    .playlist-target-select { max-width: 240px; padding: 0 9px; }
+    .music-playlist-tabs { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0; }
+    .music-playlist-tab-wrap { display: inline-flex; align-items: center; gap: 5px; padding: 2px 6px 2px 2px; border: 1px solid #294969; border-radius: 9px; background: rgba(11, 25, 42, .88); }
+    .music-playlist-tab {
+      display: inline-flex;
+      min-height: 33px;
+      align-items: center;
+      gap: 8px;
+      padding: 0 10px;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      background: transparent;
+      color: #9eb8d3;
+      cursor: pointer;
+      font-size: 10px;
+    }
+    .music-playlist-tab[aria-pressed="true"] { border-color: #398ed2; background: rgba(40, 115, 177, .2); color: #d5ebff; }
+    .music-playlist-tab-count { color: #7897b6; }
+    .playlist-delete-button { padding: 0; border: 0; background: none; color: #8ca7c3; cursor: pointer; font-size: 14px; line-height: 1; }
+    .playlist-delete-button:hover { color: #ff9a9f; }
+    .music-library-status { min-height: 18px; margin: 8px 0; color: #84a7c7; font-size: 11px; }
+
+    .safety-note {
+      padding: 11px 13px;
+      border: 1px solid rgba(67, 117, 162, .35);
+      border-radius: 9px;
+      background: rgba(15, 35, 57, .72);
+      color: #8eabc8 !important;
+      font-size: 11px !important;
+      line-height: 1.55 !important;
+    }
+
+    .ai-panel { max-width: 640px; margin-top: 25px; }
+    .ai-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .ai-mode-label { color: #87b6ac; font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .ai-messages {
+      display: flex;
+      min-height: 220px;
+      max-height: 390px;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+      margin: 15px 0 11px;
+      padding: 15px;
+      border: 1px solid rgba(47, 86, 125, .58);
+      border-radius: 12px;
+      background: rgba(8, 20, 35, .63);
+    }
+
+    .ai-message {
+      max-width: 85%;
+      margin: 0 !important;
+      padding: 10px 12px;
+      border: 1px solid rgba(63, 107, 148, .48);
+      border-radius: 11px 11px 11px 3px;
+      background: #10243a;
+      color: #d3e6fa !important;
+      font-size: 12px !important;
+      line-height: 1.55 !important;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .ai-message.user-message { align-self: flex-end; border-color: rgba(69, 161, 255, .3); border-radius: 11px 11px 3px 11px; background: rgba(39, 107, 169, .28); }
+    .ai-typing { display: flex; align-items: center; gap: 7px; color: #a9c7df !important; }
+    .ai-typing-dots { display: inline-flex; gap: 3px; align-items: center; }
+    .ai-typing-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--cyan); animation: ai-typing-bounce 900ms ease-in-out infinite; }
+    .ai-typing-dot:nth-child(2) { animation-delay: 120ms; }
+    .ai-typing-dot:nth-child(3) { animation-delay: 240ms; }
+    @keyframes ai-typing-bounce {
+      0%, 60%, 100% { opacity: .35; transform: translateY(0); }
+      30% { opacity: 1; transform: translateY(-3px); }
+    }
+    .ai-form button:disabled { cursor: wait; opacity: .6; }
+    .ai-form, .friend-message-form, .add-friend-form { display: flex; gap: 8px; }
+    .ai-form input, .friend-message-form input, .add-friend-form input {
+      width: 100%;
+      min-width: 0;
+      height: 41px;
+      padding: 0 11px;
+      border: 1px solid #234362;
+      border-radius: 8px;
+      outline: 0;
+      background: #091728;
+      color: var(--text);
+      font-size: 12px;
+    }
+
+    .ai-form input:focus, .friend-message-form input:focus, .add-friend-form input:focus { border-color: var(--blue); }
+    .ai-form button, .friend-message-form button, .add-friend-form button {
+      flex: 0 0 auto;
+      min-height: 40px;
+      padding: 0 13px;
+      border: 0;
+      border-radius: 8px;
+      background: #328ff0;
+      color: #061324;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 750;
+    }
+
+    .ai-form button:hover, .friend-message-form button:hover, .add-friend-form button:hover { background: #55a9ff; }
+    .ai-clear-button {
+      min-height: 32px;
+      padding: 0 10px;
+      border: 1px solid #31515c;
+      border-radius: 8px;
+      background: rgba(11, 28, 38, .82);
+      color: #a7c7d0;
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .ai-clear-button:hover { border-color: var(--cyan); color: #e4fff9; }
+
+    .account-panel, .settings-panel { display: grid; max-width: 820px; gap: 14px; margin-top: 24px; }
+    .account-panel[hidden], .settings-panel[hidden] { display: none; }
+    .account-overview, .account-form-card, .settings-card {
+      min-width: 0;
+      padding: 17px;
+      border: 1px solid rgba(58, 112, 121, .55);
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(14, 43, 51, .88), rgba(7, 21, 33, .85));
+      box-shadow: inset 0 1px rgba(211, 250, 244, .035);
+    }
+    .account-overview { display: flex; align-items: center; gap: 15px; }
+    .profile-avatar { display: grid; width: 58px; height: 58px; flex: 0 0 auto; place-items: center; border: 1px solid rgba(128, 240, 208, .4); border-radius: 16px; background: linear-gradient(145deg, rgba(65, 185, 171, .26), rgba(35, 91, 92, .35)); font-size: 30px; }
+    .account-kicker { margin: 0 0 5px !important; color: var(--cyan) !important; font-size: 9px !important; font-weight: 800 !important; letter-spacing: .13em; }
+    .account-overview h2, .account-form-card h2, .settings-card h2 { margin: 0; color: #e7f5f4; font-size: 16px; }
+    .account-overview p:last-child, .account-form-card > p, .settings-card > p { margin: 7px 0 0; color: #9bb9c2; font-size: 11px; line-height: 1.6; }
+    .account-form-card { display: grid; gap: 13px; }
+    .account-form { display: grid; max-width: 460px; gap: 11px; }
+    .account-field, .settings-field { display: grid; gap: 6px; color: #aac3ce; font-size: 11px; font-weight: 650; }
+    .account-field input, .account-field select, .embed-code {
+      width: 100%;
+      min-height: 40px;
+      padding: 9px 11px;
+      border: 1px solid #28505d;
+      border-radius: 8px;
+      outline: 0;
+      background: rgba(5, 17, 28, .9);
+      color: var(--text);
+      font: inherit;
+      font-size: 12px;
+    }
+    .account-field input:focus, .account-field select:focus, .embed-code:focus { border-color: var(--cyan); }
+    .account-submit, .embed-copy-button {
+      min-height: 38px;
+      padding: 0 13px;
+      border: 0;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #5de3d5, #9bea75);
+      color: #08201c;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 800;
+      justify-self: start;
+    }
+    .account-status, .settings-status { min-height: 16px; margin: 0 !important; color: #96c9b8 !important; font-size: 10px !important; line-height: 1.5 !important; }
+    .account-note { padding: 12px; border: 1px solid rgba(74, 139, 142, .35); border-radius: 10px; background: rgba(7, 22, 31, .56); }
+    .settings-card { display: grid; gap: 12px; }
+    .settings-card-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .theme-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 9px; }
+    .theme-choice {
+      display: grid;
+      gap: 8px;
+      min-height: 83px;
+      padding: 9px;
+      border: 1px solid #274650;
+      border-radius: 10px;
+      background: rgba(6, 19, 29, .72);
+      color: #d7e8e8;
+      cursor: pointer;
+      font-size: 11px;
+      text-align: left;
+    }
+    .theme-choice:hover, .theme-choice[aria-pressed="true"] { border-color: var(--cyan); background: rgba(28, 69, 70, .52); }
+    .theme-swatch { display: block; height: 31px; border-radius: 6px; }
+    .theme-swatch.ocean { background: linear-gradient(110deg, #163846, #42d4dc, #a4ed70); }
+    .theme-swatch.violet { background: linear-gradient(110deg, #262044, #a58bff, #ff9fdb); }
+    .theme-swatch.ember { background: linear-gradient(110deg, #42271f, #ffad68, #ff8e79); }
+    .theme-swatch.forest { background: linear-gradient(110deg, #163426, #72df9b, #dcf17a); }
+    .setting-row { display: flex; min-height: 46px; align-items: center; justify-content: space-between; gap: 16px; padding: 9px 0; border-top: 1px solid rgba(58, 105, 117, .28); color: #d4e5e8; font-size: 11px; }
+    .setting-row:first-of-type { border-top: 0; }
+    .setting-description { display: block; margin-top: 4px; color: #8daab2; font-size: 10px; line-height: 1.5; }
+    .setting-row input[type="checkbox"] { width: 17px; height: 17px; accent-color: var(--cyan); }
+    .settings-field input[type="range"] { width: min(250px, 55vw); accent-color: var(--cyan); }
+    .embed-code { min-height: 74px; resize: vertical; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 10px; line-height: 1.5; }
+    .embed-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .embed-copy-button { min-height: 33px; font-size: 10px; }
+    .mobile-nav-extra { display: none; }
+
+    .friends-panel {
+      display: grid;
+      max-width: 900px;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+      margin-top: 23px;
+    }
+
+    .friends-sidebar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
+      grid-template-areas: "heading form" "status status" "list list";
+      gap: 12px 20px;
+      padding: 17px;
+      border: 1px solid rgba(47, 86, 125, .64);
+      border-radius: 15px;
+      background: linear-gradient(120deg, rgba(17, 43, 69, .88), rgba(8, 20, 35, .82));
+    }
+
+    .friends-roster-heading { grid-area: heading; align-self: center; }
+    .friends-roster-kicker { margin: 0 0 5px !important; color: #69b8ff !important; font-size: 9px !important; font-weight: 800 !important; letter-spacing: .14em; }
+    .friends-roster-heading h2 { margin: 0; color: #e7f2ff; font-size: 17px; }
+    .friends-sidebar .safety-note { margin: 5px 0 0; color: #8fa9c3; font-size: 10px; line-height: 1.45; }
+    .friends-sidebar .add-friend-form { grid-area: form; align-self: center; }
+    .friends-status { grid-area: status; min-height: 14px; margin: 0 !important; color: #86a6c5 !important; font-size: 10px !important; line-height: 1.4 !important; }
+    .friend-list { grid-area: list; display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
+    .friend-list-item { display: flex; min-width: 0; align-items: center; gap: 3px; padding: 4px; border: 1px solid rgba(60, 97, 135, .48); border-radius: 11px; background: rgba(5, 16, 29, .45); }
+    .friend-select {
+      display: flex;
+      min-width: 0;
+      min-height: 45px;
+      flex: 1;
+      align-items: center;
+      gap: 8px;
+      padding: 0 7px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      color: #bed2e7;
+      cursor: pointer;
+      font-size: 11px;
+      text-align: left;
+    }
+
+    .friend-select:hover, .friend-select.selected { border-color: rgba(81, 154, 223, .35); background: rgba(24, 55, 84, .82); color: #eef7ff; }
+    .friend-avatar { display: grid; width: 31px; height: 31px; flex: 0 0 auto; place-items: center; border: 1px solid rgba(102, 188, 255, .3); border-radius: 10px; background: linear-gradient(145deg, rgba(69, 161, 255, .25), rgba(38, 89, 134, .28)); color: #9bd5ff; font-size: 12px; font-weight: 750; }
+    .friend-name-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .remove-friend {
+      width: 28px;
+      height: 28px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: #7993ad;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .remove-friend:hover { background: rgba(242, 99, 110, .12); color: #ff9a9f; }
+    .friend-chat { display: flex; min-width: 0; min-height: 340px; flex-direction: column; padding: 16px; border: 1px solid rgba(47, 86, 125, .64); border-radius: 15px; background: rgba(5, 16, 29, .68); box-shadow: inset 0 1px rgba(180, 218, 255, .03); }
+    .friend-chat-header { min-height: 34px; padding-bottom: 12px; border-bottom: 1px solid rgba(47, 86, 125, .5); color: #e2efff; font-size: 12px; font-weight: 700; }
+    .friend-messages { display: flex; flex: 1; flex-direction: column; gap: 8px; overflow-y: auto; margin: 12px 0; padding: 14px; border: 1px solid rgba(47, 86, 125, .28); border-radius: 11px; background: radial-gradient(ellipse at 50% 0, rgba(35, 83, 127, .12), transparent 70%), rgba(3, 12, 23, .42); }
+    .friend-empty { max-width: 280px; margin: auto !important; color: #90abc5 !important; font-size: 11px !important; line-height: 1.6 !important; text-align: center; }
+    .friend-bubble { max-width: 85%; align-self: flex-end; padding: 9px 11px; border: 1px solid rgba(69, 161, 255, .25); border-radius: 12px 12px 3px 12px; background: linear-gradient(145deg, rgba(39, 107, 169, .34), rgba(20, 63, 101, .42)); color: #d9eaff; font-size: 11px; line-height: 1.5; overflow-wrap: anywhere; white-space: pre-wrap; }
+    .friend-message-form[hidden] { display: none; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
+
+    .soundtrack-dock {
+      position: fixed;
+      z-index: 8;
+      right: 0;
+      bottom: 0;
+      left: var(--rail-width);
+      display: flex;
+      min-height: 100px;
+      align-items: center;
+      gap: 14px;
+      padding: 10px clamp(16px, 4vw, 42px);
+      border-top: 1px solid #244c70;
+      background: rgba(7, 17, 31, .98);
+      box-shadow: 0 -12px 35px rgba(0, 0, 0, .28);
+      backdrop-filter: blur(14px);
+    }
+
+    .soundtrack-track-info { display: flex; min-width: 150px; flex: 1 1 220px; align-items: center; gap: 11px; }
+    .soundtrack-artwork { width: 48px; height: 48px; flex: 0 0 auto; border-radius: 8px; background: #14283e; object-fit: cover; }
+    .soundtrack-track-copy { min-width: 0; }
+    .soundtrack-track-title, .soundtrack-track-artist { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .soundtrack-track-title { color: #e4f1ff; font-size: 12px; font-weight: 700; }
+    .soundtrack-track-artist { margin-top: 4px; color: #91abc5; font-size: 10px; }
+    .soundtrack-player-frame { width: min(100%, 560px); height: 175px; flex: 1 1 460px; border: 0; border-radius: 10px; background: #101f32; }
+    .soundtrack-audio { width: min(100%, 440px); flex: 1 1 260px; height: 40px; }
+    .soundtrack-audio[hidden], .soundtrack-player-frame[hidden] { display: none; }
+    .soundtrack-full-track { flex: 0 0 auto; padding: 8px 10px; border: 1px solid #294969; border-radius: 8px; background: #10243a; color: #c6ddf4; cursor: pointer; font-size: 10px; }
+    .soundtrack-full-track:hover { border-color: #3a78ad; color: white; }
+    .soundtrack-full-track[hidden] { display: none; }
+    body.has-full-track .soundtrack-dock { min-height: 200px; justify-content: center; }
+    body.has-full-track .soundtrack-track-info, body.has-full-track .soundtrack-audio { display: none; }
+    .soundtrack-actions { display: flex; flex: 0 0 auto; align-items: flex-start; }
+    .soundtrack-actions button {
+      width: 34px;
+      height: 34px;
+      border: 1px solid #294969;
+      border-radius: 8px;
+      background: #10243a;
+      color: #c6ddf4;
+      cursor: pointer;
+      font-size: 18px;
+    }
+    .soundtrack-actions button:hover { border-color: #3a78ad; color: white; }
+    body.has-soundtrack .main-stage { padding-bottom: 150px; }
+
+    @media (max-width: 760px) {
+      :root { --rail-width: 0px; }
+      .sidebar {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        width: 100%;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        background: rgba(8, 19, 33, .96);
+      }
+
+      .brand { height: 58px; padding: 0 20px; }
+      .signup-button { min-height: 34px; margin: 0 12px 2px; }
+      .sidebar nav > .nav-list {
+        display: flex;
+        gap: 4px;
+        overflow-x: auto;
+        padding: 8px 12px 10px;
+        scrollbar-width: none;
+      }
+
+      .sidebar nav > .nav-list::-webkit-scrollbar { display: none; }
+      .sidebar nav > .nav-list li { flex: 0 0 auto; }
+      .sidebar nav > .nav-list .nav-link { min-height: 38px; gap: 8px; padding: 0 11px; font-size: 11px; }
+      .sidebar nav > .nav-list .nav-icon { width: 16px; height: 16px; }
+      .sidebar nav > .nav-list .mobile-nav-extra { display: list-item; }
+      .sidebar-bottom { display: none; }
+      .workspace { min-height: calc(100vh - 150px); margin-left: 0; }
+      .topbar { height: 46px; padding: 0 20px; }
+      .topbar-status { font-size: 10px; }
+      .topbar-actions { gap: 8px; }
+      .nav-toggle { min-height: 29px; padding: 0 8px; font-size: 9px; }
+      .main-stage { min-height: calc(100vh - 196px); }
+      .soundtrack-dock { left: 0; min-height: 104px; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "track close" "audio full"; gap: 5px 8px; padding: 8px 10px; }
+      .soundtrack-track-info { min-width: 0; grid-area: track; gap: 7px; }
+      .soundtrack-artwork { width: 38px; height: 38px; }
+      .soundtrack-track-title { font-size: 10px; }
+      .soundtrack-track-artist { font-size: 9px; }
+      .soundtrack-audio { width: 100%; min-width: 0; grid-area: audio; height: 36px; }
+      .soundtrack-full-track { padding: 7px; font-size: 9px; }
+      .soundtrack-player-frame { min-width: 0; height: 175px; flex: 1; }
+      .soundtrack-actions { grid-area: close; }
+      .soundtrack-actions button { width: 30px; height: 30px; }
+      body.has-soundtrack .main-stage { padding-bottom: 126px; }
+      body.has-full-track .soundtrack-dock { min-height: 218px; grid-template-areas: "player player" "full close"; }
+      body.has-full-track .soundtrack-player-frame:not([hidden]) { width: 100%; height: 175px; grid-area: player; }
+      body.has-full-track .soundtrack-full-track { grid-area: full; justify-self: end; }
+      body.has-full-track .soundtrack-actions { justify-self: end; }
+      body.has-full-track .main-stage { padding-bottom: 240px; }
+      .dashboard { width: min(100% - 40px, 590px); padding-top: 54px; }
+      .hero-wordmark { margin-bottom: 21px; }
+      .section-heading { margin-top: 37px; }
+      .shortcut-grid { column-gap: 8px; }
+      .shortcut { gap: 9px; padding: 9px 7px; }
+      .dashboard-footer { gap: 15px; flex-wrap: wrap; }
+    }
+
+    @media (max-width: 500px) {
+      .topbar-status { display: none; }
+      .dashboard { width: min(100% - 36px, 420px); padding-top: 40px; }
+      .hero { margin-bottom: 29px; }
+      .hero-wordmark { font-size: 22px; }
+      .hero-wordmark .dragon-mark { width: 46px; height: 46px; font-size: 38px; }
+      h1 { font-size: 36px; }
+      .search-form { height: 56px; padding-left: 14px; border-radius: 14px; }
+      .search-input { font-size: 12px; }
+      .search-button { min-width: 48px; height: 36px; }
+      .section-heading { margin-top: 34px; }
+      .shortcut-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 8px; }
+      .shortcut { min-height: 64px; }
+      .shortcut-description { font-size: 9px; }
+      .dashboard-footer { margin-top: 29px; gap: 13px; font-size: 9px; }
+      .add-game-form { grid-template-columns: 1fr; }
+      .add-game-button { justify-self: start; }
+      .game-list { grid-template-columns: 1fr; }
+      .music-search-form { gap: 7px; }
+      .music-search-form button { min-width: 72px; }
+      .music-track { gap: 8px; padding: 8px; }
+      .music-track-actions { flex-wrap: wrap; justify-content: flex-end; gap: 5px 7px; }
+      .music-track-actions button, .music-track-actions a { font-size: 10px; }
+      .music-track-actions .music-play-button { padding: 6px 7px; }
+      .playlist-create-form { flex-wrap: wrap; }
+      .playlist-create-form input { flex: 1; }
+      .playlist-target-select { max-width: 100%; }
+      .friends-sidebar { grid-template-columns: minmax(0, 1fr); grid-template-areas: "heading" "form" "status" "list"; gap: 10px; padding: 13px; }
+      .friends-sidebar .add-friend-form { width: 100%; }
+      .friend-list { grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); }
+      .friend-chat { min-height: 290px; padding: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+      .ai-typing-dot { animation: none; opacity: 1; }
+      .main-stage, .main-stage::before, .main-stage::after { animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3.5 10 8.5-7 8.5 7v10a1 1 0 0 1-1 1h-5.2v-7h-4.6v7H4.5a1 1 0 0 1-1-1V10Z"/></symbol>
+    <symbol id="i-game" viewBox="0 0 24 24"><path d="M7.1 7h9.8a4 4 0 0 1 3.9 3.2l1 5.2a2.8 2.8 0 0 1-4.6 2.6l-2.1-1.8H8.9l-2.1 1.8a2.8 2.8 0 0 1-4.6-2.6l1-5.2A4 4 0 0 1 7.1 7Z"/><path d="M8 10v4m-2-2h4m6-1h.01M18 13h.01"/></symbol>
+    <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v9a2.5 2.5 0 0 1-2.5 2.5H10l-6 4V5.5Z"/></symbol>
+    <symbol id="i-friends" viewBox="0 0 24 24"><path d="M16 20v-1.7a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4V20"/><circle cx="9" cy="7" r="4"/><path d="M22 20v-1.7a4 4 0 0 0-3-3.9m-1-11.2a4 4 0 0 1 0 7.8"/></symbol>
+    <symbol id="i-bot" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 4v4m-3 5v2m6-2v2M2 13h2m16 0h2m-14 4h8"/><circle cx="12" cy="3" r="1"/></symbol>
+    <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7.5 19h10.2a4.3 4.3 0 0 0 .4-8.6A6.5 6.5 0 0 0 5.6 9a5 5 0 0 0 1.9 10Z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"/><path d="m19.4 15 .1.1a1.7 1.7 0 1 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 1 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 1 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V2a1.7 1.7 0 1 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 1 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2 2.9Z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7.3"/><path d="m16.2 16.2 4.3 4.3"/></symbol>
+  </svg>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="app-sidebar">
+      <a class="brand" href="#home" data-page="home" aria-label="literalsineos home">
+        <span class="dragon-mark" aria-hidden="true">🐉</span>
+        <span class="brand-name">literalsineos<span>.</span></span>
+      </a>
+      <a class="signup-button" href="#account" data-page="account">
+        <svg aria-hidden="true"><use href="#i-user"/></svg>
+        <span>Sign up</span>
+      </a>
+      <nav aria-label="Main navigation">
+        <ul class="nav-list">
+          <li><a class="nav-link active" href="#home" data-page="home" aria-current="page"><svg class="nav-icon"><use href="#i-home"/></svg>Home</a></li>
+          <li><a class="nav-link" href="#games" data-page="games"><svg class="nav-icon"><use href="#i-game"/></svg>Games</a></li>
+          <li><a class="nav-link" href="#music" data-page="music"><svg class="nav-icon"><use href="#i-music"/></svg>Music</a></li>
+          <li><a class="nav-link" href="#chat" data-page="chat"><svg class="nav-icon"><use href="#i-chat"/></svg>Chat</a></li>
+          <li><a class="nav-link" href="#friends" data-page="friends"><svg class="nav-icon"><use href="#i-friends"/></svg>Friends</a></li>
+          <li><a class="nav-link" href="#ai" data-page="ai"><svg class="nav-icon"><use href="#i-bot"/></svg>Pixel AI</a></li>
+          <li><a class="nav-link" href="#cloud" data-page="cloud"><svg class="nav-icon"><use href="#i-cloud"/></svg>Cloud Arcade</a></li>
+          <li class="mobile-nav-extra"><a class="nav-link" href="#account" data-page="account"><svg class="nav-icon"><use href="#i-user"/></svg>Account</a></li>
+          <li class="mobile-nav-extra"><a class="nav-link" href="#settings" data-page="settings"><svg class="nav-icon"><use href="#i-settings"/></svg>Settings</a></li>
+        </ul>
+      </nav>
+      <div class="sidebar-bottom">
+        <ul class="nav-list">
+          <li><a class="nav-link" href="#account" data-page="account"><svg class="nav-icon"><use href="#i-user"/></svg>Account</a></li>
+          <li><a class="nav-link" href="#settings" data-page="settings"><svg class="nav-icon"><use href="#i-settings"/></svg>Settings</a></li>
+        </ul>
+        <p class="sync-note">Your next adventure starts here.<br>Account sync isn't available in this local demo.</p>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <div class="breadcrumb"><strong>literalsineos</strong><span class="crumb-slash">/</span><span id="current-page">Home</span></div>
+        <div class="topbar-actions">
+          <button class="nav-toggle" id="nav-toggle" type="button" aria-controls="app-sidebar" aria-pressed="false">Hide menu</button>
+          <div class="topbar-status"><span class="status-dot"></span>All systems ready</div>
+        </div>
+      </header>
+
+      <main class="main-stage">
+        <div class="dashboard" id="home-view">
+          <section class="hero" aria-labelledby="greeting">
+            <div class="hero-wordmark"><span class="dragon-mark" aria-hidden="true">🐉</span><span>literalsineos<span>.</span></span></div>
+            <div class="date-label" id="today"></div>
+            <h1 id="greeting">Good evening</h1>
+            <p class="hero-copy">Kick back. Pick a game. Make it a good one.</p>
+          </section>
+
+          <form class="search-form" id="search-form" role="search">
+            <svg class="search-icon" aria-hidden="true"><use href="#i-search"/></svg>
+            <input class="search-input" id="search-input" type="search" autocomplete="off" placeholder="Search the web or enter a URL" aria-label="Search the web or enter a URL">
+            <button class="search-button" type="submit">Go</button>
+          </form>
+
+          <div class="section-heading"><h2>Launch something</h2><span>YOUR ARCADE, AT A GLANCE</span></div>
+          <nav class="shortcut-grid" aria-label="Quick launch">
+            <a class="shortcut" href="#games" data-page="games"><svg class="shortcut-icon"><use href="#i-game"/></svg><span class="shortcut-copy"><span class="shortcut-title">Games</span><span class="shortcut-description">Find your next high score</span></span></a>
+            <a class="shortcut" href="#music" data-page="music"><svg class="shortcut-icon"><use href="#i-music"/></svg><span class="shortcut-copy"><span class="shortcut-title">Music</span><span class="shortcut-description">Set the mood, press play</span></span></a>
+            <a class="shortcut" href="#chat" data-page="chat"><svg class="shortcut-icon"><use href="#i-chat"/></svg><span class="shortcut-copy"><span class="shortcut-title">Chat</span><span class="shortcut-description">Catch up with your crew</span></span></a>
+            <a class="shortcut" href="#friends" data-page="friends"><svg class="shortcut-icon"><use href="#i-friends"/></svg><span class="shortcut-copy"><span class="shortcut-title">Friends</span><span class="shortcut-description">Who's ready to play?</span></span></a>
+            <a class="shortcut" href="#ai" data-page="ai"><svg class="shortcut-icon"><use href="#i-bot"/></svg><span class="shortcut-copy"><span class="shortcut-title">Pixel AI</span><span class="shortcut-description">Your co-pilot for the quest</span></span></a>
+            <a class="shortcut" href="#cloud" data-page="cloud"><svg class="shortcut-icon"><use href="#i-cloud"/></svg><span class="shortcut-copy"><span class="shortcut-title">Cloud Arcade</span><span class="shortcut-description">Play across your devices</span></span></a>
+            <a class="shortcut" href="#account" data-page="account"><svg class="shortcut-icon"><use href="#i-user"/></svg><span class="shortcut-copy"><span class="shortcut-title">Account</span><span class="shortcut-description">Your player profile</span></span></a>
+            <a class="shortcut" href="#settings" data-page="settings"><svg class="shortcut-icon"><use href="#i-settings"/></svg><span class="shortcut-copy"><span class="shortcut-title">Settings</span><span class="shortcut-description">Make it yours</span></span></a>
+          </nav>
+
+          <footer class="dashboard-footer">
+            <a class="footer-brand" href="#home" data-page="home">literalsineos.</a>
+            <span>Built for the love of play</span>
+            <a href="#games" data-page="games">Explore games</a>
+            <a href="#settings" data-page="settings">Preferences</a>
+          </footer>
+        </div>
+
+        <section class="dashboard page-view" id="section-view" aria-live="polite">
+          <div class="date-label">YOUR ARCADE, YOUR WAY</div>
+          <div class="page-title-row">
+            <h1 id="section-title">Games</h1>
+            <button class="add-game-button" id="toggle-add-game" type="button" aria-controls="game-form-panel" aria-expanded="false" hidden>+ Add game</button>
+          </div>
+          <p id="section-description"></p>
+          <div class="game-library" id="game-library" hidden>
+            <div class="game-form-panel" id="game-form-panel" hidden>
+              <form class="add-game-form" id="add-game-form">
+                <label class="game-field" for="game-name">Game name
+                  <input id="game-name" name="name" type="text" maxlength="60" placeholder="e.g. Stardew Valley" required>
+                </label>
+                <label class="game-field" for="game-url">Game link <span>(optional)</span>
+                  <input id="game-url" name="url" type="url" placeholder="https://...">
+                </label>
+                <label class="game-field" for="game-image">Cover image <span>(optional, shown in your library)</span>
+                  <input id="game-image" name="image" type="file" accept="image/png,image/jpeg,image/webp" aria-describedby="game-image-note">
+                  <span class="game-image-note" id="game-image-note">PNG, JPG, or WebP up to 5 MB. Stored in this browser; it isn't posted online.</span>
+                </label>
+                <button class="add-game-button" type="submit">Save game</button>
+              </form>
+              <div class="game-image-preview" id="game-image-preview" hidden>
+                <img id="game-image-preview-img" alt="Selected game cover preview">
+                <div class="game-image-preview-copy">
+                  <span>Cover ready to add</span>
+                  <button class="remove-game-image" id="remove-game-image" type="button">Remove cover</button>
+                </div>
+              </div>
+              <p class="game-status" id="game-status" role="status" aria-live="polite"></p>
+            </div>
+            <div class="game-list" id="game-list"></div>
+          </div>
+          <div class="music-library" id="music-library" hidden>
+            <form class="music-search-form" id="music-search-form" role="search">
+              <input id="music-search-input" type="search" autocomplete="off" placeholder="Listen to Anything" aria-label="Listen to Anything" required>
+              <button id="music-search-button" type="submit">Search</button>
+            </form>
+            <p class="music-note">Search Apple’s catalog for songs or artists. Play Song starts an audio preview when available; use the Apple Music player for full-length listening, which may require a subscription. Likes and playlists are saved in this browser.</p>
+            <section class="music-playlist-section" aria-labelledby="my-music-heading">
+              <h2 class="music-section-heading" id="my-music-heading">Liked music &amp; playlists</h2>
+              <form class="playlist-create-form" id="create-playlist-form">
+                <label class="sr-only" for="playlist-name-input">New playlist name</label>
+                <input id="playlist-name-input" type="text" maxlength="40" placeholder="New playlist name" required>
+                <button type="submit">Create playlist</button>
+                <label class="sr-only" for="playlist-target-select">Add songs to playlist</label>
+                <select class="playlist-target-select" id="playlist-target-select">
+                  <option value="">Choose a playlist for songs</option>
+                </select>
+              </form>
+              <div class="music-playlist-tabs" id="music-playlist-tabs" aria-label="Your music collections"></div>
+              <p class="music-library-status" id="music-library-status" role="status" aria-live="polite"></p>
+              <div class="music-results" id="music-library-tracks"></div>
+            </section>
+            <section class="music-recommendations" aria-labelledby="recommendations-heading">
+              <h2 class="music-section-heading" id="recommendations-heading">Recommended songs</h2>
+              <p class="music-status" id="recommendations-status" role="status" aria-live="polite">Loading popular songs...</p>
+              <div class="music-results" id="music-recommendations"></div>
+            </section>
+            <section class="music-search-results" aria-labelledby="search-results-heading">
+              <h2 class="music-section-heading" id="search-results-heading">Search results</h2>
+              <p class="music-status" id="music-status" role="status" aria-live="polite">Search for a song, artist, or album to get started.</p>
+              <div class="music-results" id="music-results"></div>
+            </section>
+          </div>
+          <div class="ai-panel" id="ai-panel" hidden>
+            <div class="ai-toolbar">
+              <span class="ai-mode-label">Offline assistant</span>
+              <button class="ai-clear-button" id="clear-ai-chat" type="button">Clear chat</button>
+            </div>
+            <p class="safety-note">Pixel AI runs locally in this demo. It can help with common questions, writing prompts, simple math, and game tips, but it isn't connected to ChatGPT or a live AI model.</p>
+            <div class="ai-messages" id="ai-messages" aria-live="polite">
+              <p class="ai-message assistant-message">Hi! I can help brainstorm, write a short story or poem, do simple math, and share a few game tips. What are you working on?</p>
+            </div>
+            <form class="ai-form" id="ai-form">
+              <label class="sr-only" for="ai-input">Message Pixel AI</label>
+              <input id="ai-input" type="text" maxlength="400" autocomplete="off" placeholder="Ask anything or tell me what you need..." required>
+              <button type="submit">Send</button>
+            </form>
+          </div>
+          <section class="account-panel" id="account-panel" hidden aria-label="Player account">
+            <div class="account-overview">
+              <div class="profile-avatar" aria-hidden="true">🐉</div>
+              <div>
+                <p class="account-kicker">PLAYER PROFILE</p>
+                <h2 id="profile-display-name">Guest player</h2>
+                <p id="profile-display-handle">Create a local profile for this browser.</p>
+              </div>
+            </div>
+            <div class="account-form-card">
+              <div>
+                <h2>Sign up</h2>
+                <p>Set up a profile on this device. No password or payment details are requested.</p>
+              </div>
+              <form class="account-form" id="account-form">
+                <label class="account-field" for="profile-name">Player name
+                  <input id="profile-name" name="name" type="text" maxlength="32" autocomplete="nickname" placeholder="Your player name" required>
+                </label>
+                <label class="account-field" for="profile-handle">Player tag <span>(optional)</span>
+                  <input id="profile-handle" name="handle" type="text" maxlength="24" autocomplete="off" placeholder="@player">
+                </label>
+                <label class="account-field" for="profile-favorite">Favorite game
+                  <input id="profile-favorite" name="favorite" type="text" maxlength="60" placeholder="What are you playing?">
+                </label>
+                <button class="account-submit" type="submit">Save player profile</button>
+                <p class="account-status" id="account-status" role="status" aria-live="polite"></p>
+              </form>
+              <p class="account-note">This is a local profile only. It does not create an online account, sync across devices, or verify anyone's identity.</p>
+            </div>
+          </section>
+          <section class="settings-panel" id="settings-panel" hidden aria-label="Launcher settings">
+            <section class="settings-card">
+              <div class="settings-card-heading">
+                <div><h2>Layout</h2><p>Adjust how the launcher fits your screen.</p></div>
+              </div>
+              <label class="setting-row" for="hide-sidebar-setting">
+                <span>Hide sidebar<span class="setting-description">Use the menu button in the header to bring it back.</span></span>
+                <input id="hide-sidebar-setting" type="checkbox">
+              </label>
+              <label class="setting-row" for="compact-layout-setting">
+                <span>Compact layout<span class="setting-description">Reduce spacing across dashboard cards.</span></span>
+                <input id="compact-layout-setting" type="checkbox">
+              </label>
+            </section>
+            <section class="settings-card">
+              <div><h2>Special themes</h2><p>Choose an accent palette for your arcade.</p></div>
+              <div class="theme-grid" id="theme-grid" role="group" aria-label="Color theme">
+                <button class="theme-choice" type="button" data-theme-choice="ocean" aria-pressed="true"><span class="theme-swatch ocean"></span>Ocean arcade</button>
+                <button class="theme-choice" type="button" data-theme-choice="violet" aria-pressed="false"><span class="theme-swatch violet"></span>Violet pulse</button>
+                <button class="theme-choice" type="button" data-theme-choice="ember" aria-pressed="false"><span class="theme-swatch ember"></span>Ember glow</button>
+                <button class="theme-choice" type="button" data-theme-choice="forest" aria-pressed="false"><span class="theme-swatch forest"></span>Forest quest</button>
+              </div>
+            </section>
+            <section class="settings-card">
+              <div><h2>Google Sites embed</h2><p>For a public embed, host this site at an HTTPS URL and replace the example address with your hosted page. A local <code>file://</code> page cannot be embedded publicly.</p></div>
+              <label class="settings-field" for="embed-snippet">Embed code
+                <textarea class="embed-code" id="embed-snippet" readonly></textarea>
+              </label>
+              <div class="embed-actions">
+                <button class="embed-copy-button" id="copy-embed" type="button">Copy embed code</button>
+                <p class="settings-status" id="settings-status" role="status" aria-live="polite"></p>
+              </div>
+            </section>
+          </section>
+          <section class="friends-panel" id="friends-panel" aria-label="Friends and local chat" hidden>
+            <div class="friends-sidebar">
+              <div class="friends-roster-heading">
+                <p class="friends-roster-kicker">LOCAL LOBBY</p>
+                <h2>Your squad</h2>
+                <p class="safety-note">Contacts and messages stay in this browser; messages are not sent to other people.</p>
+              </div>
+              <form class="add-friend-form" id="add-friend-form">
+                <label class="sr-only" for="friend-name">Friend's name</label>
+                <input id="friend-name" type="text" maxlength="40" placeholder="Add a person's name" required>
+                <button type="submit">Add</button>
+              </form>
+              <p class="friends-status" id="friends-status" role="status" aria-live="polite"></p>
+              <div class="friend-list" id="friend-list"></div>
+            </div>
+            <div class="friend-chat">
+              <div class="friend-chat-header" id="friend-chat-header">Choose a person to start a chat</div>
+              <div class="friend-messages" id="friend-messages" aria-live="polite"></div>
+              <form class="friend-message-form" id="friend-message-form" hidden>
+                <label class="sr-only" for="friend-message-input">Write a message</label>
+                <input id="friend-message-input" type="text" maxlength="500" placeholder="Write a message..." required>
+                <button type="submit">Send</button>
+              </form>
+            </div>
+          </section>
+          <a class="back-link" href="#home" data-page="home">&larr; Back to your dashboard</a>
+        </section>
+      </main>
+    </div>
+    <aside class="soundtrack-dock" id="soundtrack-dock" aria-label="Audio-only music player" hidden>
+      <div class="soundtrack-track-info">
+        <img class="soundtrack-artwork" id="music-player-artwork" alt="">
+        <div class="soundtrack-track-copy">
+          <strong class="soundtrack-track-title" id="music-player-title"></strong>
+          <span class="soundtrack-track-artist" id="music-player-artist"></span>
+        </div>
+      </div>
+      <audio class="soundtrack-audio" id="music-audio" controls preload="none" aria-label="Song preview"></audio>
+      <button class="soundtrack-full-track" id="show-full-track" type="button" hidden>Full-length in Apple Music</button>
+      <iframe
+        class="soundtrack-player-frame"
+        id="music-embed"
+        title="Apple Music audio player"
+        allow="autoplay; encrypted-media"
+        referrerpolicy="strict-origin-when-cross-origin"
+        loading="lazy"
+        hidden
+      ></iframe>
+      <div class="soundtrack-actions">
+        <button id="close-soundtrack" type="button" aria-label="Close music player">×</button>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    (function () {
+      var pages = {
+        home: ["Home", "Your home for everything you love to play."],
+        games: ["Games", "Add games with optional launch links and cover images. Your collection is saved in this browser."],
+        music: ["Music", "Listen to Anything. Search by song, artist, or album."],
+        chat: ["Chat", "Add contacts on this device and keep a local conversation list."],
+        friends: ["Friends", "Add people by name and start a local chat."],
+        ai: ["Pixel AI", "A private, offline helper for safe questions, game ideas, and tips."],
+        cloud: ["Cloud Arcade", "Pick up where you left off and take your games along for the ride."],
+        account: ["Account", "Create a player profile saved only in this browser."],
+        settings: ["Settings", "Choose a theme, adjust the layout, and copy an embed snippet."]
+      };
+      var homeView = document.getElementById("home-view");
+      var sectionView = document.getElementById("section-view");
+      var currentPage = document.getElementById("current-page");
+      var sectionTitle = document.getElementById("section-title");
+      var sectionDescription = document.getElementById("section-description");
+      var addGameButton = document.getElementById("toggle-add-game");
+      var gameFormPanel = document.getElementById("game-form-panel");
+      var gameLibrary = document.getElementById("game-library");
+      var gameList = document.getElementById("game-list");
+      var gameStatus = document.getElementById("game-status");
+      var gameImageInput = document.getElementById("game-image");
+      var gameImagePreview = document.getElementById("game-image-preview");
+      var gameImagePreviewImage = document.getElementById("game-image-preview-img");
+      var gameImageSubmitButton = document.querySelector("#add-game-form button[type='submit']");
+      var pendingGameImage = "";
+      var processingGameImage = false;
+      var gameImageTaskId = 0;
+      var maxGameImageSize = 5 * 1024 * 1024;
+      var maxStoredGameImageLength = 600000;
+      var musicLibrary = document.getElementById("music-library");
+      var musicSearchForm = document.getElementById("music-search-form");
+      var musicSearchInput = document.getElementById("music-search-input");
+      var musicSearchButton = document.getElementById("music-search-button");
+      var musicStatus = document.getElementById("music-status");
+      var musicResults = document.getElementById("music-results");
+      var musicRecommendations = document.getElementById("music-recommendations");
+      var musicRecommendationsSection = document.querySelector(".music-recommendations");
+      var recommendationsStatus = document.getElementById("recommendations-status");
+      var musicEmbed = document.getElementById("music-embed");
+      var musicAudio = document.getElementById("music-audio");
+      var musicPlayerArtwork = document.getElementById("music-player-artwork");
+      var musicPlayerTitle = document.getElementById("music-player-title");
+      var musicPlayerArtist = document.getElementById("music-player-artist");
+      var showFullTrackButton = document.getElementById("show-full-track");
+      var soundtrackDock = document.getElementById("soundtrack-dock");
+      var musicLibraryStatus = document.getElementById("music-library-status");
+      var musicLibraryTracks = document.getElementById("music-library-tracks");
+      var musicPlaylistTabs = document.getElementById("music-playlist-tabs");
+      var createPlaylistForm = document.getElementById("create-playlist-form");
+      var playlistNameInput = document.getElementById("playlist-name-input");
+      var playlistTargetSelect = document.getElementById("playlist-target-select");
+      var aiPanel = document.getElementById("ai-panel");
+      var aiMessages = document.getElementById("ai-messages");
+      var aiInput = document.getElementById("ai-input");
+      var aiSendButton = document.querySelector("#ai-form button[type='submit']");
+      var clearAiChatButton = document.getElementById("clear-ai-chat");
+      var aiIsWriting = false;
+      var aiReplyTimer = null;
+      var aiReplyToken = 0;
+      var aiTypingIndicator = null;
+      var lastAiPrompt = "";
+      var lastAiResponse = "";
+      var accountPanel = document.getElementById("account-panel");
+      var settingsPanel = document.getElementById("settings-panel");
+      var accountForm = document.getElementById("account-form");
+      var profileNameInput = document.getElementById("profile-name");
+      var profileHandleInput = document.getElementById("profile-handle");
+      var profileFavoriteInput = document.getElementById("profile-favorite");
+      var profileDisplayName = document.getElementById("profile-display-name");
+      var profileDisplayHandle = document.getElementById("profile-display-handle");
+      var accountStatus = document.getElementById("account-status");
+      var navToggle = document.getElementById("nav-toggle");
+      var hideSidebarSetting = document.getElementById("hide-sidebar-setting");
+      var compactLayoutSetting = document.getElementById("compact-layout-setting");
+      var embedSnippet = document.getElementById("embed-snippet");
+      var settingsStatus = document.getElementById("settings-status");
+      var friendsPanel = document.getElementById("friends-panel");
+      var friendList = document.getElementById("friend-list");
+      var friendChatHeader = document.getElementById("friend-chat-header");
+      var friendMessagesView = document.getElementById("friend-messages");
+      var friendMessageForm = document.getElementById("friend-message-form");
+      var friendMessageInput = document.getElementById("friend-message-input");
+      var friendsStatus = document.getElementById("friends-status");
+      var games = [];
+      var musicSearchId = 0;
+      var recommendationsLoaded = false;
+      var friends = [];
+      var friendMessages = Object.create(null);
+      var activeFriendId = null;
+      var musicData = { liked: [], playlists: [] };
+      var activeMusicCollectionId = "liked";
+      var settingValues = { theme: "ocean", sidebarHidden: false, compact: false };
+
+      function saveSettingValues() {
+        try {
+          window.localStorage.setItem("literalsineos-settings", JSON.stringify(settingValues));
+          settingsStatus.textContent = "";
+          return true;
+        } catch (error) {
+          settingsStatus.textContent = "Settings could not be saved in this browser.";
+          return false;
+        }
+      }
+
+      function applySettings() {
+        if (settingValues.theme === "ocean") document.body.removeAttribute("data-theme");
+        else document.body.setAttribute("data-theme", settingValues.theme);
+        document.body.classList.toggle("sidebar-hidden", settingValues.sidebarHidden);
+        document.body.classList.toggle("compact-layout", settingValues.compact);
+        navToggle.textContent = settingValues.sidebarHidden ? "Show menu" : "Hide menu";
+        navToggle.setAttribute("aria-pressed", String(settingValues.sidebarHidden));
+        hideSidebarSetting.checked = settingValues.sidebarHidden;
+        compactLayoutSetting.checked = settingValues.compact;
+        document.querySelectorAll("[data-theme-choice]").forEach(function (button) {
+          button.setAttribute("aria-pressed", String(button.getAttribute("data-theme-choice") === settingValues.theme));
+        });
+      }
+
+      try {
+        var storedSettings = JSON.parse(window.localStorage.getItem("literalsineos-settings") || "{}");
+        if (storedSettings && typeof storedSettings === "object") {
+          if (["ocean", "violet", "ember", "forest"].indexOf(storedSettings.theme) !== -1) settingValues.theme = storedSettings.theme;
+          settingValues.sidebarHidden = storedSettings.sidebarHidden === true;
+          settingValues.compact = storedSettings.compact === true;
+        }
+      } catch (error) {
+        settingsStatus.textContent = "Saved settings could not be loaded; defaults are active.";
+      }
+      applySettings();
+
+      embedSnippet.value = '<iframe src="https://YOUR-SITE.example" title="literalsineos arcade" width="100%" height="720" style="border:0" loading="lazy"></iframe>';
+
+      function renderPlayerProfile(profile) {
+        var name = typeof profile.name === "string" ? profile.name.trim() : "";
+        var handle = typeof profile.handle === "string" ? profile.handle.trim() : "";
+        var favorite = typeof profile.favorite === "string" ? profile.favorite.trim() : "";
+        profileDisplayName.textContent = name || "Guest player";
+        profileDisplayHandle.textContent = [handle ? (handle.charAt(0) === "@" ? handle : "@" + handle) : "", favorite ? "Favorite: " + favorite : ""].filter(Boolean).join(" · ") || "Create a local profile for this browser.";
+        profileNameInput.value = name;
+        profileHandleInput.value = handle;
+        profileFavoriteInput.value = favorite;
+      }
+
+      try {
+        var storedProfile = window.localStorage.getItem("literalsineos-profile");
+        if (storedProfile) renderPlayerProfile(JSON.parse(storedProfile));
+      } catch (error) {
+        accountStatus.textContent = "The saved profile could not be loaded from this browser.";
+      }
+
+      accountForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        var profile = {
+          name: profileNameInput.value.trim(),
+          handle: profileHandleInput.value.trim(),
+          favorite: profileFavoriteInput.value.trim()
+        };
+        if (!profile.name) {
+          profileNameInput.focus();
+          accountStatus.textContent = "Enter a player name to save your profile.";
+          return;
+        }
+        try {
+          window.localStorage.setItem("literalsineos-profile", JSON.stringify(profile));
+          renderPlayerProfile(profile);
+          accountStatus.textContent = "Player profile saved on this device.";
+        } catch (error) {
+          accountStatus.textContent = "Profile could not be saved. Check this browser's storage settings.";
+        }
+      });
+
+      navToggle.addEventListener("click", function () {
+        settingValues.sidebarHidden = !settingValues.sidebarHidden;
+        applySettings();
+        saveSettingValues();
+      });
+
+      hideSidebarSetting.addEventListener("change", function () {
+        settingValues.sidebarHidden = hideSidebarSetting.checked;
+        applySettings();
+        saveSettingValues();
+      });
+
+      compactLayoutSetting.addEventListener("change", function () {
+        settingValues.compact = compactLayoutSetting.checked;
+        applySettings();
+        saveSettingValues();
+      });
+
+      document.getElementById("theme-grid").addEventListener("click", function (event) {
+        var choice = event.target.closest("[data-theme-choice]");
+        if (!choice) return;
+        settingValues.theme = choice.getAttribute("data-theme-choice");
+        applySettings();
+        saveSettingValues();
+      });
+
+      document.getElementById("copy-embed").addEventListener("click", function () {
+        function copied() {
+          settingsStatus.textContent = "Embed code copied. Replace the example URL with your hosted HTTPS page.";
+        }
+        function copyFallback() {
+          try {
+            embedSnippet.select();
+            settingsStatus.textContent = document.execCommand("copy")
+              ? "Embed code copied. Replace the example URL with your hosted HTTPS page."
+              : "Copy was blocked. Select the code above and copy it manually.";
+          } catch (error) {
+            settingsStatus.textContent = "Copy was blocked. Select the code above and copy it manually.";
+          }
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(embedSnippet.value).then(copied).catch(copyFallback);
+        } else {
+          copyFallback();
+        }
+      });
+
+      function updateMusicRecommendationVisibility() {
+        musicRecommendationsSection.hidden = Boolean(musicSearchInput.value.trim());
+      }
+
+      musicSearchInput.addEventListener("input", updateMusicRecommendationVisibility);
+      updateMusicRecommendationVisibility();
+
+      try {
+        var savedSocialData = JSON.parse(window.localStorage.getItem("literalsineos-social") || "{}");
+        if (Array.isArray(savedSocialData.friends)) {
+          friends = savedSocialData.friends.filter(function (friend) {
+            return friend && typeof friend.id === "string" && typeof friend.name === "string";
+          });
+        }
+        if (savedSocialData.messages && typeof savedSocialData.messages === "object" && !Array.isArray(savedSocialData.messages)) {
+          Object.keys(savedSocialData.messages).forEach(function (id) {
+            var messages = savedSocialData.messages[id];
+            if (Array.isArray(messages)) {
+              friendMessages[id] = messages.filter(function (message) {
+                return message && typeof message.text === "string";
+              }).map(function (message) { return { text: message.text }; });
+            }
+          });
+        }
+      } catch (error) {
+        friendsStatus.textContent = "Saved contacts could not be loaded in this browser.";
+      }
+
+      function saveSocialData() {
+        try {
+          window.localStorage.setItem("literalsineos-social", JSON.stringify({
+            friends: friends,
+            messages: friendMessages
+          }));
+          friendsStatus.textContent = "";
+          return true;
+        } catch (error) {
+          friendsStatus.textContent = "Your browser could not save this contact or message.";
+          return false;
+        }
+      }
+
+      function isSafeGameUrl(url) {
+        if (!url) return true;
+        try {
+          var parsedUrl = new URL(url);
+          return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:";
+        } catch (error) {
+          return false;
+        }
+      }
+
+      function isSafeGameImage(image) {
+        return typeof image === "string" && image.length <= maxStoredGameImageLength &&
+          /^data:image\/(?:webp|jpeg);base64,[A-Za-z0-9+/]+=*$/i.test(image);
+      }
+
+      try {
+        var savedGames = JSON.parse(window.localStorage.getItem("literalsineos-games") || "[]");
+        if (Array.isArray(savedGames)) {
+          games = savedGames.filter(function (game) {
+            return game && typeof game.id === "string" && typeof game.name === "string" &&
+              typeof game.url === "string" && isSafeGameUrl(game.url);
+          });
+        }
+      } catch (error) {
+        gameStatus.textContent = "Saved games could not be loaded in this browser.";
+      }
+
+      function saveGames(nextGames) {
+        try {
+          window.localStorage.setItem("literalsineos-games", JSON.stringify(nextGames));
+          games = nextGames;
+          gameStatus.textContent = "";
+          return true;
+        } catch (error) {
+          gameStatus.textContent = "Your browser could not save this game. Check its storage settings and try again.";
+          return false;
+        }
+      }
+
+      function renderGames() {
+        gameList.replaceChildren();
+        if (games.length === 0) {
+          var emptyMessage = document.createElement("p");
+          emptyMessage.className = "game-status";
+          emptyMessage.textContent = "Your library is empty. Add a game to get started.";
+          gameList.appendChild(emptyMessage);
+          return;
+        }
+
+        games.forEach(function (game) {
+          var card = document.createElement("article");
+          card.className = "game-card";
+          var icon;
+          if (isSafeGameImage(game.image)) {
+            icon = document.createElement("img");
+            icon.className = "game-cover";
+            icon.src = game.image;
+            icon.alt = game.name + " cover image";
+            icon.loading = "lazy";
+            icon.decoding = "async";
+          } else {
+            icon = document.createElement("span");
+            icon.className = "game-card-icon";
+            icon.textContent = "✦";
+            icon.setAttribute("aria-hidden", "true");
+          }
+          var copy = document.createElement("div");
+          copy.className = "game-card-copy";
+          var title = document.createElement("div");
+          title.className = "game-card-title";
+          title.textContent = game.name;
+          var action = document.createElement("a");
+          action.className = "game-card-action";
+          if (game.url) {
+            action.href = game.url;
+            action.target = "_blank";
+            action.rel = "noopener noreferrer";
+            action.textContent = "Open game ↗";
+          } else {
+            action.textContent = "In your library";
+          }
+          var remove = document.createElement("button");
+          remove.className = "remove-game-button";
+          remove.type = "button";
+          remove.textContent = "×";
+          remove.setAttribute("aria-label", "Remove " + game.name);
+          remove.addEventListener("click", function () {
+            var nextGames = games.filter(function (item) { return item.id !== game.id; });
+            if (saveGames(nextGames)) renderGames();
+          });
+          copy.appendChild(title);
+          copy.appendChild(action);
+          card.appendChild(icon);
+          card.appendChild(copy);
+          card.appendChild(remove);
+          gameList.appendChild(card);
+        });
+      }
+
+      function isSafeHttpsUrl(value) {
+        try {
+          return new URL(value).protocol === "https:";
+        } catch (error) {
+          return false;
+        }
+      }
+
+      function hasInappropriateText(value) {
+        return /\b(?:asshole|bastard|bitch(?:es|y)?|cock|cunt|damn|dick(?:head|s)?|fuck(?:ed|er|ers|ing|s)?|motherfuck(?:er|ers|ing)?|nudes?|orgasm|porn(?:ography)?|pussy|sex(?:ual|y)?|shit(?:s|ting|ty)?|slut|wap|whore)\b/i.test(value || "");
+      }
+
+      function isFamilyFriendlyTrack(track) {
+        var explicitness = String(track.trackExplicitness || "").toLowerCase();
+        var metadata = [track.trackName, track.artistName, track.collectionName].filter(function (value) {
+          return typeof value === "string";
+        }).join(" ");
+        return (!explicitness || explicitness === "notexplicit") && !hasInappropriateText(metadata);
+      }
+
+      function getAppleMusicEmbedUrl(trackViewUrl) {
+        try {
+          var url = new URL(trackViewUrl);
+          if (url.protocol !== "https:" || url.hostname !== "music.apple.com") return "";
+          url.hostname = "embed.music.apple.com";
+          return url.toString();
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function isSafeApplePreviewUrl(value) {
+        try {
+          var url = new URL(value);
+          return url.protocol === "https:" && /(^|\.)itunes\.apple\.com$/.test(url.hostname);
+        } catch (error) {
+          return false;
+        }
+      }
+
+      function loadAppleMusicTrack(track) {
+        var previewUrl = isSafeApplePreviewUrl(track.previewUrl) ? track.previewUrl : "";
+        var embedUrl = getAppleMusicEmbedUrl(track.trackViewUrl);
+        if (!previewUrl && !embedUrl) {
+          musicStatus.textContent = "This song has no preview or audio-only player available.";
+          return;
+        }
+        musicPlayerArtwork.src = track.artworkUrl100 || "";
+        musicPlayerArtwork.hidden = !track.artworkUrl100;
+        musicPlayerTitle.textContent = track.trackName || "Selected song";
+        musicPlayerArtist.textContent = track.artistName || "";
+        musicAudio.dataset.trackViewUrl = track.trackViewUrl || "";
+        soundtrackDock.hidden = false;
+        document.body.classList.add("has-soundtrack");
+        document.body.classList.remove("has-full-track");
+        musicEmbed.hidden = true;
+        musicEmbed.src = "about:blank";
+        musicAudio.pause();
+        musicAudio.hidden = !previewUrl;
+        showFullTrackButton.hidden = !previewUrl || !embedUrl;
+        showFullTrackButton.textContent = "Full-length in Apple Music";
+        if (previewUrl) {
+          musicAudio.src = previewUrl;
+          musicAudio.load();
+          musicAudio.play().then(function () {
+            musicStatus.textContent = "Playing the audio preview. Full-length playback may require Apple Music access.";
+          }).catch(function () {
+            musicStatus.textContent = "Audio preview ready. Press play in the player below.";
+          });
+          return;
+        }
+        musicAudio.removeAttribute("src");
+        musicAudio.load();
+        if (!embedUrl) {
+          musicStatus.textContent = "This song has no preview or audio-only player available.";
+          return;
+        }
+        musicEmbed.title = "Audio-only player for " + (track.trackName || "selected song");
+        musicEmbed.src = embedUrl;
+        musicEmbed.hidden = false;
+        document.body.classList.add("has-full-track");
+        musicStatus.textContent = "Audio-only Apple Music player loaded. Full-length playback may require Apple Music access.";
+      }
+
+      function searchAppleMusic(term) {
+        var searchUrl = "https://itunes.apple.com/search?term=" + encodeURIComponent(term) + "&entity=song&limit=20";
+        return fetch(searchUrl).then(function (response) {
+          if (!response.ok) throw new Error("Music catalog search failed");
+          return response.json();
+        }).then(function (data) {
+          var seenTracks = Object.create(null);
+          return (Array.isArray(data.results) ? data.results : []).map(function (item) {
+            return {
+              id: String(item.trackId || item.trackViewUrl || ""),
+              trackName: item.trackName || "",
+              artistName: item.artistName || "",
+              collectionName: item.collectionName || "",
+              artworkUrl100: item.artworkUrl100 || "",
+              trackViewUrl: item.trackViewUrl || "",
+              previewUrl: item.previewUrl || "",
+              trackExplicitness: item.trackExplicitness || ""
+            };
+          }).filter(function (track) {
+            return track.id && track.trackName && track.artistName && isSafeHttpsUrl(track.trackViewUrl) &&
+              isFamilyFriendlyTrack(track);
+          }).filter(function (track) {
+            var key = (track.trackName + "\n" + track.artistName).toLowerCase();
+            if (seenTracks[key]) return false;
+            seenTracks[key] = true;
+            return true;
+          }).slice(0, 12);
+        });
+      }
+
+      function playTrackInWebsite(track) {
+        if (isSafeApplePreviewUrl(track.previewUrl)) {
+          loadAppleMusicTrack(track);
+          return;
+        }
+        var query = [track.trackName, track.artistName].filter(Boolean).join(" ");
+        if (!query) {
+          if (track.trackViewUrl) {
+            loadAppleMusicTrack(track);
+            return;
+          }
+          musicStatus.textContent = "This track has no searchable title or artist.";
+          return;
+        }
+        musicStatus.textContent = "Finding an audio preview for this song...";
+        searchAppleMusic(query).then(function (tracks) {
+          if (!tracks.length) {
+            if (track.trackViewUrl) {
+              loadAppleMusicTrack(track);
+              return;
+            }
+            musicStatus.textContent = "This song was not found in the audio-only catalog.";
+            return;
+          }
+          var exactMatch = tracks.find(function (item) {
+            return item.trackName.toLowerCase() === String(track.trackName || "").toLowerCase() &&
+              item.artistName.toLowerCase() === String(track.artistName || "").toLowerCase();
+          });
+          loadAppleMusicTrack(exactMatch || tracks[0]);
+        }).catch(function () {
+          musicStatus.textContent = "Music search is unavailable right now. Try again.";
+        });
+      }
+
+      function closeSoundtrack() {
+        musicAudio.pause();
+        musicAudio.removeAttribute("src");
+        musicAudio.load();
+        musicEmbed.src = "about:blank";
+        musicEmbed.hidden = true;
+        soundtrackDock.hidden = true;
+        document.body.classList.remove("has-soundtrack");
+        document.body.classList.remove("has-full-track");
+      }
+
+      function normalizeMusicTrack(track) {
+        if (!track || typeof track !== "object") return null;
+        if (!isFamilyFriendlyTrack(track)) return null;
+        var id = String(track.id || track.trackId || track.trackViewUrl || "");
+        if (!id) return null;
+        return {
+          id: id,
+          trackName: typeof track.trackName === "string" ? track.trackName : "Untitled track",
+          artistName: typeof track.artistName === "string" ? track.artistName : "",
+          collectionName: typeof track.collectionName === "string" ? track.collectionName : "",
+          artworkUrl100: isSafeHttpsUrl(track.artworkUrl100) ? track.artworkUrl100 : "",
+          trackViewUrl: isSafeHttpsUrl(track.trackViewUrl) && new URL(track.trackViewUrl).hostname === "music.apple.com" ? track.trackViewUrl : "",
+          previewUrl: isSafeApplePreviewUrl(track.previewUrl) ? track.previewUrl : "",
+        };
+      }
+
+      try {
+        var savedMusicData = JSON.parse(window.localStorage.getItem("literalsineos-music") || "{}");
+        if (savedMusicData && Array.isArray(savedMusicData.liked)) {
+          musicData.liked = savedMusicData.liked.map(normalizeMusicTrack).filter(Boolean);
+        }
+        if (savedMusicData && Array.isArray(savedMusicData.playlists)) {
+          musicData.playlists = savedMusicData.playlists.filter(function (playlist) {
+            return playlist && typeof playlist.id === "string" &&
+              typeof playlist.name === "string" && !hasInappropriateText(playlist.name) &&
+              Array.isArray(playlist.tracks);
+          }).map(function (playlist) {
+            return {
+              id: playlist.id,
+              name: playlist.name.slice(0, 40),
+              tracks: playlist.tracks.map(normalizeMusicTrack).filter(Boolean)
+            };
+          });
+        }
+      } catch (error) {
+        musicLibraryStatus.textContent = "Saved music could not be loaded in this browser.";
+      }
+
+      function saveMusicData() {
+        try {
+          window.localStorage.setItem("literalsineos-music", JSON.stringify(musicData));
+          return true;
+        } catch (error) {
+          musicLibraryStatus.textContent = "Your browser could not save this music collection.";
+          return false;
+        }
+      }
+
+      function isTrackInList(list, trackId) {
+        return list.some(function (track) { return track.id === trackId; });
+      }
+
+      function isTrackLiked(trackId) {
+        return isTrackInList(musicData.liked, trackId);
+      }
+
+      function updateLikeButtons() {
+        document.querySelectorAll(".like-track-button").forEach(function (button) {
+          var liked = isTrackLiked(button.dataset.trackId);
+          button.classList.toggle("is-liked", liked);
+          button.setAttribute("aria-pressed", String(liked));
+          button.textContent = liked ? "♥ Liked" : "♡ Like";
+        });
+      }
+
+      function createMusicTrackRow(track, collectionId) {
+        var savedTrack = normalizeMusicTrack(track);
+        if (!savedTrack) return null;
+        var row = document.createElement("article");
+        row.className = "music-track";
+        var artwork = document.createElement("img");
+        artwork.className = "music-artwork";
+        artwork.alt = "";
+        artwork.loading = "lazy";
+        artwork.src = savedTrack.artworkUrl100;
+        var info = document.createElement("div");
+        info.className = "music-track-info";
+        var name = document.createElement("div");
+        name.className = "music-track-name";
+        name.textContent = savedTrack.trackName;
+        var meta = document.createElement("div");
+        meta.className = "music-track-meta";
+        meta.textContent = [savedTrack.artistName, savedTrack.collectionName].filter(Boolean).join(" · ");
+        var actions = document.createElement("div");
+        actions.className = "music-track-actions";
+        if (savedTrack.trackViewUrl || (savedTrack.trackName && savedTrack.artistName)) {
+          var playSong = document.createElement("button");
+          playSong.type = "button";
+          playSong.className = "music-play-button";
+          playSong.textContent = "Play Song";
+          playSong.setAttribute("aria-label", "Play " + savedTrack.trackName + " in the audio-only player");
+          playSong.addEventListener("click", function () { playTrackInWebsite(savedTrack); });
+          actions.appendChild(playSong);
+        }
+        var likeButton = document.createElement("button");
+        likeButton.className = "like-track-button";
+        likeButton.type = "button";
+        likeButton.dataset.trackId = savedTrack.id;
+        likeButton.addEventListener("click", function () {
+          if (isTrackLiked(savedTrack.id)) {
+            musicData.liked = musicData.liked.filter(function (item) { return item.id !== savedTrack.id; });
+            musicLibraryStatus.textContent = "Removed from liked music.";
+          } else {
+            musicData.liked.push(savedTrack);
+            musicLibraryStatus.textContent = "Added to liked music.";
+          }
+          if (saveMusicData()) {
+            updateLikeButtons();
+            renderMusicCollections();
+          }
+        });
+        actions.appendChild(likeButton);
+        if (collectionId) {
+          var removeButton = document.createElement("button");
+          removeButton.className = "remove-from-collection";
+          removeButton.type = "button";
+          removeButton.textContent = "Remove";
+          removeButton.addEventListener("click", function () {
+            var collection = collectionId === "liked"
+              ? musicData.liked
+              : (musicData.playlists.find(function (playlist) { return playlist.id === collectionId; }) || {}).tracks;
+            if (!collection) return;
+            if (collectionId === "liked") {
+              musicData.liked = collection.filter(function (item) { return item.id !== savedTrack.id; });
+            } else {
+              var playlist = musicData.playlists.find(function (item) { return item.id === collectionId; });
+              playlist.tracks = collection.filter(function (item) { return item.id !== savedTrack.id; });
+            }
+            musicLibraryStatus.textContent = "Removed from this collection.";
+            if (saveMusicData()) renderMusicCollections();
+          });
+          actions.appendChild(removeButton);
+        } else {
+          var addButton = document.createElement("button");
+          addButton.className = "add-track-button";
+          addButton.type = "button";
+          addButton.textContent = "Add";
+          addButton.setAttribute("aria-label", "Add " + savedTrack.trackName + " to selected playlist");
+          addButton.addEventListener("click", function () {
+            var playlist = musicData.playlists.find(function (item) {
+              return item.id === playlistTargetSelect.value;
+            });
+            if (!playlist) {
+              musicLibraryStatus.textContent = "Create a playlist and choose it above before adding songs.";
+              return;
+            }
+            if (isTrackInList(playlist.tracks, savedTrack.id)) {
+              musicLibraryStatus.textContent = "That song is already in " + playlist.name + ".";
+              return;
+            }
+            playlist.tracks.push(savedTrack);
+            musicLibraryStatus.textContent = "Added to " + playlist.name + ".";
+            if (saveMusicData()) renderMusicCollections();
+          });
+          actions.appendChild(addButton);
+        }
+        info.appendChild(name);
+        info.appendChild(meta);
+        row.appendChild(artwork);
+        row.appendChild(info);
+        row.appendChild(actions);
+        return row;
+      }
+
+      function renderMusicResults(tracks, target, status) {
+        target.replaceChildren();
+        var safeTracks = tracks.map(normalizeMusicTrack).filter(Boolean);
+        if (safeTracks.length === 0) {
+          status.textContent = "No songs found. Try another search.";
+          return 0;
+        }
+        status.textContent = safeTracks.length + " songs found. Play Song opens the audio-only player below.";
+        safeTracks.forEach(function (track) {
+          var row = createMusicTrackRow(track);
+          if (row) target.appendChild(row);
+        });
+        updateLikeButtons();
+        return safeTracks.length;
+      }
+
+      function renderMusicCollections() {
+        var targetPlaylistId = activeMusicCollectionId !== "liked"
+          ? activeMusicCollectionId
+          : playlistTargetSelect.value;
+        musicPlaylistTabs.replaceChildren();
+        playlistTargetSelect.replaceChildren();
+        var placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = "Choose a playlist for songs";
+        playlistTargetSelect.appendChild(placeholder);
+
+        var collections = [{ id: "liked", name: "Liked Music", tracks: musicData.liked }];
+        collections = collections.concat(musicData.playlists);
+        collections.forEach(function (collection) {
+          var wrapper = document.createElement("div");
+          wrapper.className = "music-playlist-tab-wrap";
+          var button = document.createElement("button");
+          button.className = "music-playlist-tab";
+          button.type = "button";
+          button.setAttribute("aria-pressed", String(collection.id === activeMusicCollectionId));
+          button.textContent = collection.name;
+          var count = document.createElement("span");
+          count.className = "music-playlist-tab-count";
+          count.textContent = String(collection.tracks.length);
+          button.appendChild(count);
+          button.addEventListener("click", function () {
+            activeMusicCollectionId = collection.id;
+            musicLibraryStatus.textContent = "";
+            renderMusicCollections();
+          });
+          wrapper.appendChild(button);
+          if (collection.id !== "liked") {
+            var deleteButton = document.createElement("button");
+            deleteButton.className = "playlist-delete-button";
+            deleteButton.type = "button";
+            deleteButton.textContent = "×";
+            deleteButton.setAttribute("aria-label", "Delete playlist " + collection.name);
+            deleteButton.addEventListener("click", function () {
+              musicData.playlists = musicData.playlists.filter(function (playlist) {
+                return playlist.id !== collection.id;
+              });
+              if (activeMusicCollectionId === collection.id) activeMusicCollectionId = "liked";
+              if (playlistTargetSelect.value === collection.id) playlistTargetSelect.value = "";
+              musicLibraryStatus.textContent = "Playlist deleted.";
+              if (saveMusicData()) renderMusicCollections();
+            });
+            wrapper.appendChild(deleteButton);
+            var option = document.createElement("option");
+            option.value = collection.id;
+            option.textContent = collection.name;
+            playlistTargetSelect.appendChild(option);
+          }
+          musicPlaylistTabs.appendChild(wrapper);
+        });
+        if (musicData.playlists.some(function (playlist) { return playlist.id === targetPlaylistId; })) {
+          playlistTargetSelect.value = targetPlaylistId;
+        }
+
+        var activeCollection = collections.find(function (collection) {
+          return collection.id === activeMusicCollectionId;
+        }) || collections[0];
+        activeMusicCollectionId = activeCollection.id;
+        musicLibraryTracks.replaceChildren();
+        if (!activeCollection.tracks.length) {
+          var emptyMessage = document.createElement("p");
+          emptyMessage.className = "music-library-status";
+          emptyMessage.textContent = activeCollection.id === "liked"
+            ? "No liked songs yet. Tap Like on any track to save it here."
+            : "This playlist is empty. Add songs from search results or recommendations.";
+          musicLibraryTracks.appendChild(emptyMessage);
+        } else {
+          activeCollection.tracks.forEach(function (track) {
+            var row = createMusicTrackRow(track, activeCollection.id);
+            if (row) musicLibraryTracks.appendChild(row);
+          });
+        }
+        updateLikeButtons();
+      }
+
+      function loadRecommendedSongs() {
+        if (recommendationsLoaded) return;
+        recommendationsLoaded = true;
+        searchAppleMusic("new music hits").then(function (tracks) {
+          var seenArtists = Object.create(null);
+          var recommendedTracks = tracks.filter(function (track) {
+            var artist = track.artistName.toLowerCase();
+            if (seenArtists[artist]) return false;
+            seenArtists[artist] = true;
+            return true;
+          }).slice(0, 10);
+          var renderedCount = renderMusicResults(recommendedTracks, musicRecommendations, recommendationsStatus);
+          if (renderedCount) {
+            recommendationsStatus.textContent = "Fresh music picks.";
+          } else {
+            recommendationsLoaded = false;
+            recommendationsStatus.textContent = "No recommendations are available. Try searching for a song or artist.";
+          }
+        }).catch(function () {
+          recommendationsLoaded = false;
+          recommendationsStatus.textContent = "Recommendations couldn't load. Try searching for a song or artist.";
+        });
+      }
+
+      function renderFriendChat() {
+        friendMessagesView.replaceChildren();
+        var friend = friends.find(function (item) { return item.id === activeFriendId; });
+        friendMessageForm.hidden = !friend;
+        if (!friend) {
+          friendChatHeader.textContent = "Choose a person to start a chat";
+          var empty = document.createElement("p");
+          empty.className = "friend-empty";
+          empty.textContent = friends.length ? "Select a name to open the local chat." : "Add a person's name to start your friends list.";
+          friendMessagesView.appendChild(empty);
+          return;
+        }
+
+        friendChatHeader.textContent = "Chat with " + friend.name;
+        var messages = friendMessages[friend.id] || [];
+        if (!messages.length) {
+          var firstMessage = document.createElement("p");
+          firstMessage.className = "friend-empty";
+          firstMessage.textContent = "Your local chat with " + friend.name + " is ready.";
+          friendMessagesView.appendChild(firstMessage);
+        }
+        messages.forEach(function (message) {
+          var bubble = document.createElement("div");
+          bubble.className = "friend-bubble";
+          bubble.textContent = message.text;
+          friendMessagesView.appendChild(bubble);
+        });
+        friendMessagesView.scrollTop = friendMessagesView.scrollHeight;
+      }
+
+      function renderFriends() {
+        friendList.replaceChildren();
+        if (friends.length === 0) friendsStatus.textContent = friendsStatus.textContent || "Your list is empty.";
+        friends.forEach(function (friend) {
+          var row = document.createElement("div");
+          row.className = "friend-list-item";
+          var select = document.createElement("button");
+          select.type = "button";
+          select.className = "friend-select" + (friend.id === activeFriendId ? " selected" : "");
+          select.setAttribute("aria-pressed", String(friend.id === activeFriendId));
+          var avatar = document.createElement("span");
+          avatar.className = "friend-avatar";
+          avatar.textContent = friend.name.charAt(0).toUpperCase();
+          avatar.setAttribute("aria-hidden", "true");
+          var name = document.createElement("span");
+          name.className = "friend-name-label";
+          name.textContent = friend.name;
+          select.appendChild(avatar);
+          select.appendChild(name);
+          select.addEventListener("click", function () {
+            activeFriendId = friend.id;
+            friendsStatus.textContent = "";
+            renderFriends();
+            renderFriendChat();
+          });
+          var remove = document.createElement("button");
+          remove.type = "button";
+          remove.className = "remove-friend";
+          remove.textContent = "×";
+          remove.setAttribute("aria-label", "Remove " + friend.name);
+          remove.addEventListener("click", function () {
+            friends = friends.filter(function (item) { return item.id !== friend.id; });
+            delete friendMessages[friend.id];
+            if (activeFriendId === friend.id) activeFriendId = friends.length ? friends[0].id : null;
+            if (saveSocialData()) {
+              renderFriends();
+              renderFriendChat();
+            }
+          });
+          row.appendChild(select);
+          row.appendChild(remove);
+          friendList.appendChild(row);
+        });
+        renderFriendChat();
+      }
+
+      function appendAiMessage(text, sender) {
+        var message = document.createElement("p");
+        message.className = "ai-message " + (sender === "user" ? "user-message" : "assistant-message");
+        message.textContent = text;
+        aiMessages.appendChild(message);
+        aiMessages.scrollTop = aiMessages.scrollHeight;
+      }
+
+      function createAiTypingIndicator() {
+        var indicator = document.createElement("p");
+        indicator.className = "ai-message assistant-message ai-typing";
+        indicator.setAttribute("role", "status");
+        indicator.setAttribute("aria-label", "Pixel AI is writing");
+        indicator.appendChild(document.createTextNode("Pixel AI is writing"));
+        var dots = document.createElement("span");
+        dots.className = "ai-typing-dots";
+        dots.setAttribute("aria-hidden", "true");
+        for (var index = 0; index < 3; index += 1) {
+          var dot = document.createElement("span");
+          dot.className = "ai-typing-dot";
+          dots.appendChild(dot);
+        }
+        indicator.appendChild(dots);
+        return indicator;
+      }
+
+      function getSimpleMathAnswer(prompt) {
+        var match = /(?:what(?:'s| is)\s*)?(-?\d+(?:\.\d+)?)\s*(plus|minus|multiplied by|times|divided by|over|[+\-−*×x/÷])\s*(-?\d+(?:\.\d+)?)/i.exec(prompt);
+        if (!match) return "";
+        var first = Number(match[1]);
+        var second = Number(match[3]);
+        var operator = match[2].toLowerCase();
+        var symbol = operator;
+        var answer;
+        switch (operator) {
+          case "plus": operator = "+"; symbol = "+"; break;
+          case "minus": operator = "-"; symbol = "-"; break;
+          case "multiplied by":
+          case "times": operator = "*"; symbol = "×"; break;
+          case "divided by":
+          case "over": operator = "/"; symbol = "÷"; break;
+        }
+        switch (operator) {
+          case "+": answer = first + second; break;
+          case "-":
+          case "−": answer = first - second; break;
+          case "*":
+          case "×":
+          case "x": answer = first * second; break;
+          case "/":
+          case "÷":
+            if (second === 0) return "Division by zero is undefined.";
+            answer = first / second;
+            break;
+          default: return "";
+        }
+        return String(first) + " " + symbol + " " + String(second) + " = " + String(answer) + ".";
+      }
+
+      function generateGameIdea(prompt) {
+        var request = String(prompt || "").toLowerCase();
+        if (/\b(cozy|relax|calm)\b/.test(request)) {
+          return "Game idea: A cozy island-restoration game where you repair tiny harbors, befriend sea creatures, and grow a glowing garden.";
+        }
+        if (/\b(puzzle|mystery|solve)\b/.test(request)) {
+          return "Game idea: A puzzle adventure in a sunken arcade where each room is restored by solving light-and-sound patterns.";
+        }
+        if (/\b(action|adventure|fight|combat)\b/.test(request)) {
+          return "Game idea: Explore a floating ocean fortress, discover friendly rival crews, and use clever gadgets to open new routes.";
+        }
+        if (/\b(racing|race|car)\b/.test(request)) {
+          return "Game idea: Race tiny hovercraft through bright reef tunnels, collecting shortcuts and customizing your water-trail colors.";
+        }
+        var ideas = [
+          "Design a game about restoring a tiny moon garden, one glowing plant at a time.",
+          "Imagine an adventure where you deliver friendly messages between floating islands.",
+          "Create a rhythm game about helping a sleepy robot find its way home through a neon city.",
+          "Build a co-op game where players repair a colorful space station and decorate each room.",
+          "Invent an exploration game about mapping secret paths through a cloud forest."
+        ];
+        return ideas[Math.floor(Math.random() * ideas.length)];
+      }
+
+      function getRequestedTopic(prompt) {
+        var match = /\b(?:about|for|on)\s+(.+?)\s*[.!?]*$/i.exec(prompt);
+        var topic = match ? match[1].trim().slice(0, 64) : "your idea";
+        return topic;
+      }
+
+      function generateCreativeResponse(prompt) {
+        var topic = getRequestedTopic(prompt);
+        var capitalizedTopic = topic.charAt(0).toUpperCase() + topic.slice(1);
+        if (/\b(game|quest|level)\b/i.test(prompt)) return generateGameIdea(prompt);
+        if (/\b(poem|poetry|verse)\b/i.test(prompt)) {
+          return "Here's a short one about " + topic + ":\n" +
+            capitalizedTopic + " beneath the open sky,\n" +
+            "A little spark that learns to fly.\n" +
+            "One step, one try, a brighter view—\n" +
+            "The next small wonder starts with you.";
+        }
+        if (/\b(story|tale)\b/i.test(prompt)) {
+          if (/\b(lighthouse|ocean|sea|ship|island)\b/i.test(topic)) {
+            return "Here's a little story about " + topic + ": On a stormy night, the lighthouse beam went dark just as a ship disappeared from view. The keeper followed a trail of glowing shells to a hidden switch in the cliffs, and by sunrise the ship was safely home.";
+          }
+          if (/\b(dragon|cave|mountain)\b/i.test(topic)) {
+            return "Here's a little story about " + topic + ": A young explorer found a tiny dragon guarding a mountain path. Instead of asking for treasure, the dragon asked for help finding its way home—and together they discovered a village that had been waiting for them.";
+          }
+          return "Here's a little story about " + topic + ": At first, it seemed like an ordinary day. Then one small, unexpected clue appeared—and following it led to a place no one had thought to look.";
+        }
+        if (/\b(character|hero|villain)\b/i.test(prompt)) {
+          return "Character idea for " + topic + ": a curious, quick-thinking explorer who keeps a notebook of strange clues. Their strength is noticing details everyone else misses; their challenge is learning when to ask for help.";
+        }
+        if (/\b(name|names)\b/i.test(prompt)) {
+          return "A few name ideas for " + topic + ": Nova, Mosslight, Echo Vale, Juniper, or Orbit. If you tell me the vibe—funny, mysterious, cozy, or bold—I can narrow them down.";
+        }
+        if (/\b(birthday|congratulations|thank-you|thank you)\b/i.test(prompt)) {
+          return "Here's a warm message you can personalize: “Hope your day brings you plenty to smile about. You deserve all the good things coming your way—congratulations!”";
+        }
+        return generateGameIdea(prompt);
+      }
+
+      function getPixelAIResponse(prompt) {
+        var unsafeRequest = /\b(?:malware|ransomware|phishing|hack(?:ing|ed|er)?|exploit|bypass|credential|dox(?:x|xing)?|stalk(?:ing)?|scam|fraud|steal(?:ing)?|ddos|spy(?:ing)?|surveillance|weapon|bomb|kill(?:ing)?|assault|torture|murder|rape|incest|groom(?:ing)?|traffick(?:ing)?|suicide|self[-\s]?harm|porn(?:ography)?|nude|sex(?:ual)?|cocaine|meth|hate\s+speech|slur)\b/i;
+        if (unsafeRequest.test(prompt)) {
+          return "I can't help with that. If there's a safe goal behind the question, tell me what you're trying to do and I'll look for a safer way to help.";
+        }
+        if (/^\s*(hi|hello|hey|yo)\b/i.test(prompt)) {
+          return /\bhow are you\b/i.test(prompt) ? "I'm here and ready to help! What's on your mind?" : "Hey! What would you like to work on?";
+        }
+        if (/^\s*(how are you|how's it going|what's up)\b/i.test(prompt)) return "I'm here and ready to help! What's on your mind?";
+        if (/\b(thanks|thank you|thx)\b/i.test(prompt)) return "You're welcome! Glad I could help. What else is on your mind?";
+        if (/^\s*(bye|goodbye|see you)\b/i.test(prompt)) return "See you next time. Have fun out there!";
+        if (/\b(what is your name|who are you|are you human)\b/i.test(prompt)) {
+          return "I'm Pixel AI, the offline helper built into this launcher. I'm software, not a person, and I don't have a live language model behind me.";
+        }
+        if (/\b(what can you do|how do you work|what are you|are you chatgpt)\b/i.test(prompt)) {
+          return "I'm Pixel AI, a lightweight offline helper in this launcher—not ChatGPT. I can do basic arithmetic, write a few kinds of short creative text, give general tips for some games, and suggest games from your library. I don't have live web access or a connected language model, so I won't make up answers when I'm unsure.";
+        }
+        var mathAnswer = getSimpleMathAnswer(prompt);
+        if (mathAnswer) return mathAnswer;
+        if (/\b(what day is it|what day is today|what's the date|what is the date|what time is it|what's today's date)\b/i.test(prompt)) {
+          var now = new Date();
+          return /\btime\b/i.test(prompt)
+            ? "It's " + new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }).format(now) + " where your browser is set."
+            : "It's " + new Intl.DateTimeFormat(undefined, { weekday: "long", month: "long", day: "numeric", year: "numeric" }).format(now) + ".";
+        }
+        var knownExplanations = [
+          [/\b(gravity)\b/i, "Gravity is the attraction between objects with mass. On Earth, it pulls objects toward the ground and gives them weight."],
+          [/\b(photosynthesis)\b/i, "Photosynthesis is how plants use light energy to turn water and carbon dioxide into sugars, releasing oxygen as a by-product."],
+          [/\b(pixel art)\b/i, "Pixel art is digital artwork made from intentionally placed pixels. A consistent pixel scale and a limited palette help the image stay clear."],
+          [/\b(game loop)\b/i, "A game loop is the repeating cycle that reads player input, updates the game state, and draws the next frame."],
+          [/\b(artificial intelligence|machine learning)\b/i, "Artificial intelligence is a broad term for computer systems that perform tasks associated with human reasoning or perception. Machine learning is one approach: a system learns patterns from examples rather than following only hand-written rules."],
+          [/\b(ai)\b/i, "AI, or artificial intelligence, is a broad term for computer systems designed to perform tasks that usually require human-like reasoning, perception, or language. Different AI systems work in very different ways."],
+          [/\b(html)\b/i, "HTML is the markup language used to describe the structure of a web page—things like headings, links, forms, and images."],
+          [/\b(javascript|js)\b/i, "JavaScript is a programming language commonly used to make web pages interactive. It can also run on servers and in other environments."],
+          [/\b(internet|web)\b/i, "The internet is a global network of connected devices. The World Wide Web is one service that uses it, letting browsers request and display linked pages."],
+          [/\b(cpu|processor)\b/i, "A CPU is the main processor in a computer. It executes instructions and coordinates work, while other components handle tasks such as graphics or storage."],
+          [/\b(ram|memory)\b/i, "RAM is short-term working memory a computer uses for data and programs in use. It is much faster than long-term storage, but its contents do not persist when power is off."],
+          [/\b(friendship)\b/i, "Friendship is a relationship built over time through trust, care, shared experiences, and respect for each other's boundaries."]
+        ];
+        if (/\b(what is|what's|explain|define|how does)\b/i.test(prompt)) {
+          for (var explanationIndex = 0; explanationIndex < knownExplanations.length; explanationIndex += 1) {
+            if (knownExplanations[explanationIndex][0].test(prompt)) return knownExplanations[explanationIndex][1];
+          }
+        }
+        if (/^\s*(tell me more|more details|why\??|can you explain that|go on)\s*[.!?]*$/i.test(prompt) && lastAiResponse) {
+          if (/\bphotosynthesis\b/i.test(lastAiPrompt)) return "One more detail: plants capture light with chlorophyll, then use that energy in a series of reactions to build sugars. The sugars store energy the plant can use to grow.";
+          if (/\bgravity\b/i.test(lastAiPrompt)) return "In short, gravity gets stronger with more mass and weaker as objects get farther apart. Earth's gravity is what keeps us, the atmosphere, and the Moon bound to the planet.";
+          if (/\bpixel art\b/i.test(lastAiPrompt)) return "A practical tip: choose a small canvas size first, keep edges aligned to the pixel grid, and reuse a few colors for shadows and highlights.";
+          if (/\bgame loop\b/i.test(lastAiPrompt)) return "Most loops repeat three jobs: read input, update positions and rules, then render the result. Keeping those steps consistent helps the game feel responsive.";
+          if (/\b(game|story|quest|character|idea)\b/i.test(lastAiPrompt)) return "Sure—what part should I build out: the setting, characters, gameplay, or ending?";
+          return "Sure—what part would you like me to expand on? I can only use the information and offline notes available in this demo, so I don't want to invent details.";
+        }
+        if (/^\s*(another|one more|give me another)\b/i.test(prompt) && lastAiPrompt) {
+          if (/\b(game|story|quest|character|idea)\b/i.test(lastAiPrompt)) return generateCreativeResponse(lastAiPrompt);
+          if (/\b(joke|funny)\b/i.test(lastAiPrompt)) return "Why did the pixel bring a ladder to the game? It wanted to reach the next level.";
+        }
+        if (/\b(joke|make me laugh|something funny)\b/i.test(prompt)) {
+          return "Here's one: Why did the pixel bring a ladder to the game? It wanted to reach the next level.";
+        }
+        if (/\b(write|create|make|invent|generate|come up with|give me|tell me)\b/i.test(prompt) && /\b(game|story|tale|quest|character|hero|villain|idea|poem|poetry|verse|name|names|birthday|congratulations|thank-you|thank you)\b/i.test(prompt)) {
+          return generateCreativeResponse(prompt);
+        }
+        if (/\b(current|latest|recent|today's|news|weather|price|score|who won)\b/i.test(prompt)) {
+          return "I can't check live information from this offline demo, and I don't want to guess. For current results, check a reliable up-to-date source.";
+        }
+        if (/\b(sad|stressed|overwhelmed|lonely|bored)\b/i.test(prompt)) {
+          return "I'm sorry it's feeling that way. We can take it one step at a time—what's been going on? If you just want a distraction, I can also suggest a small game or activity.";
+        }
+        if (/\b(homework|studying|study|school|learn)\b/i.test(prompt)) {
+          return "Sure—send me the question or topic, and tell me which part is confusing. I'll help break it into smaller steps rather than just guess at what you need.";
+        }
+        if (/\b(code|coding|programming|debug|error message)\b/i.test(prompt)) {
+          return "I can help you reason through it. Share the relevant code, the exact error, and what you expected to happen. Remove any passwords, tokens, or private data first.";
+        }
+        if (/\b(plan|organize|focus|start)\b/i.test(prompt)) {
+          return "A good first step is to choose one specific outcome, break it into a few small actions, and start with the easiest useful one. If you tell me what you're trying to do, I'll help sketch a practical plan.";
+        }
+        if (/\b(recommend|what should i play|game to play)\b/i.test(prompt)) {
+          var requestedGenre = /\b(puzzle|cozy|racing|adventure|action|strategy|rhythm)\b/i.exec(prompt);
+          var matchingGame = requestedGenre && games.find(function (game) {
+            return game.name.toLowerCase().indexOf(requestedGenre[0].toLowerCase()) !== -1;
+          });
+          return matchingGame
+            ? "For a " + requestedGenre[0] + " pick, " + matchingGame.name + " looks like the best match in your library."
+            : games.length
+              ? "I'd start with " + games[0].name + " from your library. If you're after a particular mood or genre, tell me and I'll narrow it down."
+              : "I don't see any saved games to choose from yet. Add a few to your library and I'll pick one, or tell me what kind of game you're in the mood for.";
+        }
+        if (/\b(tips?|help|stuck|strateg(?:y|ies)|level|quest|boss)\b/i.test(prompt)) {
+          if (/\bminecraft\b/i.test(prompt)) {
+            return "For a Minecraft trip, bring food, a bed, and a few spare blocks. Mark your route with torches or note your coordinates so getting home is easier. What are you trying to do in-game?";
+          }
+          if (/\bblox\s*fruits?\b/i.test(prompt)) {
+            return "In Blox Fruits, quests close to your level are usually a steadier way to progress. Keep an eye on health and energy, and plan a route back to a safe spot.";
+          }
+          if (/\bfortnite\b/i.test(prompt)) {
+            return "In Fortnite, keep an eye on the next safe zone and rotate early when you can. A little cover and a moment to regroup can be more valuable than taking every fight.";
+          }
+          if (/\bpokemon\b/i.test(prompt)) {
+            return "For a tough Pokémon battle, check type matchups and bring a balanced team. A couple of status-healing items can save a longer route, too.";
+          }
+          if (/\b(zelda|mario)\b/i.test(prompt)) {
+            return "If you're stuck in Zelda or Mario, take another look around the blocked path and try your newest tool or ability. A nearby clue often points toward the next step.";
+          }
+          return "Try checking the objective, then change one thing at a time—your route, equipment, or timing. Which game and level are you on? I may have a more useful general tip.";
+        }
+        if (/^\s*(yes|yeah|yep|no|nope|maybe)\b/i.test(prompt) && lastAiPrompt) {
+          return "Got it. What would you like to do next?";
+        }
+        if (/\b(what do you think|your opinion|do you agree)\b/i.test(prompt)) {
+          return "I can help weigh the options, but I don't have personal opinions. What matters most to you here—simplicity, cost, time, or something else?";
+        }
+        return "I want to give you a useful answer, not make one up. This version doesn't have a live language model or web access, so I may not know that topic. I can still help with writing ideas, simple calculations, general study or coding questions, some game tips, and choosing from your saved games.";
+      }
+
+      function answerPixelAI(prompt) {
+        if (aiIsWriting) return;
+        aiIsWriting = true;
+        appendAiMessage(prompt, "user");
+        aiTypingIndicator = createAiTypingIndicator();
+        aiMessages.appendChild(aiTypingIndicator);
+        aiMessages.scrollTop = aiMessages.scrollHeight;
+        aiInput.disabled = true;
+        aiSendButton.disabled = true;
+        var replyToken = ++aiReplyToken;
+        aiReplyTimer = window.setTimeout(function () {
+          if (replyToken !== aiReplyToken) return;
+          aiTypingIndicator.remove();
+          aiTypingIndicator = null;
+          var response = getPixelAIResponse(prompt);
+          lastAiPrompt = prompt;
+          lastAiResponse = response;
+          appendAiMessage(response, "assistant");
+          aiIsWriting = false;
+          aiReplyTimer = null;
+          aiInput.disabled = false;
+          aiSendButton.disabled = false;
+          aiInput.focus();
+        }, 450);
+      }
+
+      document.getElementById("ai-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+        var prompt = aiInput.value.trim();
+        if (!prompt) {
+          aiInput.focus();
+          return;
+        }
+        answerPixelAI(prompt);
+        event.target.reset();
+      });
+
+      clearAiChatButton.addEventListener("click", function () {
+        aiReplyToken += 1;
+        if (aiReplyTimer !== null) window.clearTimeout(aiReplyTimer);
+        aiReplyTimer = null;
+        if (aiTypingIndicator) aiTypingIndicator.remove();
+        aiTypingIndicator = null;
+        aiIsWriting = false;
+        lastAiPrompt = "";
+        lastAiResponse = "";
+        aiMessages.textContent = "";
+        appendAiMessage("Chat cleared. Ask me to explain a common topic, write something short, do simple math, or troubleshoot a game.", "assistant");
+        aiInput.disabled = false;
+        aiSendButton.disabled = false;
+        aiInput.value = "";
+        aiInput.focus();
+      });
+
+      document.getElementById("add-friend-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+        var nameInput = document.getElementById("friend-name");
+        var name = nameInput.value.trim();
+        if (!name) {
+          nameInput.focus();
+          return;
+        }
+        if (friends.some(function (friend) { return friend.name.toLowerCase() === name.toLowerCase(); })) {
+          friendsStatus.textContent = "That name is already in your local list.";
+          nameInput.focus();
+          return;
+        }
+        var friend = { id: Date.now().toString(36) + Math.random().toString(36).slice(2), name: name };
+        friends.push(friend);
+        friendMessages[friend.id] = [];
+        activeFriendId = friend.id;
+        if (saveSocialData()) {
+          event.target.reset();
+          renderFriends();
+          friendMessageInput.focus();
+        }
+      });
+
+      friendMessageForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        var text = friendMessageInput.value.trim();
+        if (!text || !activeFriendId) {
+          friendMessageInput.focus();
+          return;
+        }
+        if (!friendMessages[activeFriendId]) friendMessages[activeFriendId] = [];
+        friendMessages[activeFriendId].push({ text: text });
+        if (saveSocialData()) {
+          event.target.reset();
+          renderFriendChat();
+          friendMessageInput.focus();
+        }
+      });
+
+      function showPage(page) {
+        var selected = pages[page] ? page : "home";
+        var isHome = selected === "home";
+        homeView.hidden = !isHome;
+        sectionView.classList.toggle("visible", !isHome);
+        gameLibrary.hidden = selected !== "games";
+        addGameButton.hidden = selected !== "games";
+        musicLibrary.hidden = selected !== "music";
+        aiPanel.hidden = selected !== "ai";
+        accountPanel.hidden = selected !== "account";
+        settingsPanel.hidden = selected !== "settings";
+        friendsPanel.hidden = selected !== "friends" && selected !== "chat";
+        if (selected === "music") loadRecommendedSongs();
+        currentPage.textContent = pages[selected][0];
+        sectionTitle.textContent = pages[selected][0];
+        sectionDescription.textContent = pages[selected][1];
+        document.title = (isHome ? "Home" : pages[selected][0]) + " - literalsineos";
+
+        document.querySelectorAll("[data-page]").forEach(function (link) {
+          var isActive = link.getAttribute("data-page") === selected;
+          link.classList.toggle("active", isActive);
+          if (link.classList.contains("nav-link")) {
+            if (isActive) link.setAttribute("aria-current", "page");
+            else link.removeAttribute("aria-current");
+          }
+        });
+      }
+
+      document.addEventListener("click", function (event) {
+        var link = event.target.closest("[data-page]");
+        if (!link) return;
+        var page = link.getAttribute("data-page");
+        if (!pages[page]) return;
+        event.preventDefault();
+        if (window.location.hash !== "#" + page) window.history.pushState({ page: page }, "", "#" + page);
+        showPage(page);
+      });
+
+      window.addEventListener("popstate", function () {
+        showPage(window.location.hash.slice(1) || "home");
+      });
+
+      function clearSelectedGameImage() {
+        gameImageTaskId += 1;
+        pendingGameImage = "";
+        processingGameImage = false;
+        gameImageSubmitButton.disabled = false;
+        gameImageInput.value = "";
+        gameImagePreviewImage.removeAttribute("src");
+        gameImagePreview.hidden = true;
+      }
+
+      function failGameImage(taskId, message) {
+        if (taskId !== gameImageTaskId) return;
+        clearSelectedGameImage();
+        gameStatus.textContent = message;
+      }
+
+      gameImageInput.addEventListener("change", function () {
+        var taskId = ++gameImageTaskId;
+        var file = gameImageInput.files && gameImageInput.files[0];
+        pendingGameImage = "";
+        gameImagePreview.hidden = true;
+        gameImagePreviewImage.removeAttribute("src");
+        gameStatus.textContent = "";
+        if (!file) {
+          processingGameImage = false;
+          gameImageSubmitButton.disabled = false;
+          return;
+        }
+        if (["image/png", "image/jpeg", "image/webp"].indexOf(file.type.toLowerCase()) === -1) {
+          failGameImage(taskId, "Choose a PNG, JPG, or WebP cover image.");
+          return;
+        }
+        if (file.size > maxGameImageSize) {
+          failGameImage(taskId, "That image is over 5 MB. Choose a smaller cover image.");
+          return;
+        }
+
+        processingGameImage = true;
+        gameImageSubmitButton.disabled = true;
+        gameStatus.textContent = "Preparing cover image...";
+        var reader = new FileReader();
+        reader.onerror = function () {
+          failGameImage(taskId, "The image couldn't be read. Try another file.");
+        };
+        reader.onload = function () {
+          if (taskId !== gameImageTaskId) return;
+          if (typeof reader.result !== "string") {
+            failGameImage(taskId, "The image couldn't be read. Try another file.");
+            return;
+          }
+          var cover = new Image();
+          cover.onerror = function () {
+            failGameImage(taskId, "That image couldn't be opened. Try a PNG, JPG, or WebP file.");
+          };
+          cover.onload = function () {
+            if (taskId !== gameImageTaskId) return;
+            try {
+              var scale = Math.min(1, 640 / Math.max(cover.naturalWidth, cover.naturalHeight));
+              var width = Math.max(1, Math.round(cover.naturalWidth * scale));
+              var height = Math.max(1, Math.round(cover.naturalHeight * scale));
+              var canvas = document.createElement("canvas");
+              canvas.width = width;
+              canvas.height = height;
+              var context = canvas.getContext("2d");
+              if (!context) {
+                failGameImage(taskId, "Your browser couldn't prepare that image.");
+                return;
+              }
+              context.fillStyle = "#091728";
+              context.fillRect(0, 0, width, height);
+              context.drawImage(cover, 0, 0, width, height);
+              var optimizedImage = canvas.toDataURL("image/webp", 0.82);
+              if (optimizedImage.indexOf("data:image/webp") !== 0) optimizedImage = canvas.toDataURL("image/jpeg", 0.82);
+              if (!isSafeGameImage(optimizedImage)) {
+                failGameImage(taskId, "Your browser couldn't prepare that image in a supported format.");
+                return;
+              }
+              if (optimizedImage.length > maxStoredGameImageLength) {
+                failGameImage(taskId, "That image is still too large after resizing. Choose a simpler or smaller image.");
+                return;
+              }
+              pendingGameImage = optimizedImage;
+              processingGameImage = false;
+              gameImageSubmitButton.disabled = false;
+              gameImagePreviewImage.src = optimizedImage;
+              gameImagePreview.hidden = false;
+              gameStatus.textContent = "Cover ready. It will be saved in this browser.";
+            } catch (error) {
+              failGameImage(taskId, "Your browser couldn't prepare that image.");
+            }
+          };
+          try {
+            cover.src = reader.result;
+          } catch (error) {
+            failGameImage(taskId, "That image couldn't be opened. Try a PNG, JPG, or WebP file.");
+          }
+        };
+        try {
+          reader.readAsDataURL(file);
+        } catch (error) {
+          failGameImage(taskId, "The image couldn't be read. Try another file.");
+        }
+      });
+
+      document.getElementById("remove-game-image").addEventListener("click", function () {
+        clearSelectedGameImage();
+        gameStatus.textContent = "Cover removed.";
+      });
+
+      document.getElementById("add-game-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+        var nameInput = document.getElementById("game-name");
+        var urlInput = document.getElementById("game-url");
+        var name = nameInput.value.trim();
+        var url = urlInput.value.trim();
+        if (processingGameImage) {
+          gameStatus.textContent = "Wait for the cover image to finish preparing.";
+          return;
+        }
+        if (!name) {
+          nameInput.focus();
+          return;
+        }
+        if (url) {
+          if (!isSafeGameUrl(url)) {
+            gameStatus.textContent = "Enter a valid http or https game link, or leave it blank.";
+            urlInput.focus();
+            return;
+          }
+        }
+        var nextGames = games.concat([{ id: Date.now().toString(36) + Math.random().toString(36).slice(2), name: name, url: url, image: pendingGameImage }]);
+        if (!saveGames(nextGames)) return;
+        renderGames();
+        event.target.reset();
+        clearSelectedGameImage();
+        gameFormPanel.hidden = true;
+        addGameButton.setAttribute("aria-expanded", "false");
+        nameInput.focus();
+      });
+
+      addGameButton.addEventListener("click", function () {
+        gameFormPanel.hidden = !gameFormPanel.hidden;
+        addGameButton.setAttribute("aria-expanded", String(!gameFormPanel.hidden));
+        if (!gameFormPanel.hidden) document.getElementById("game-name").focus();
+      });
+
+      document.getElementById("close-soundtrack").addEventListener("click", closeSoundtrack);
+
+      showFullTrackButton.addEventListener("click", function () {
+        if (musicEmbed.hidden) {
+          var embedUrl = getAppleMusicEmbedUrl(musicAudio.dataset.trackViewUrl);
+          if (!embedUrl) {
+            musicStatus.textContent = "The full-length Apple Music player is unavailable for this song.";
+            return;
+          }
+          musicAudio.pause();
+          musicAudio.hidden = true;
+          musicEmbed.title = "Audio-only Apple Music player for " + musicPlayerTitle.textContent;
+          musicEmbed.src = embedUrl;
+          musicEmbed.hidden = false;
+          showFullTrackButton.textContent = "Back to preview";
+          document.body.classList.add("has-full-track");
+          musicStatus.textContent = "Audio-only Apple Music player loaded. Full-length playback may require Apple Music access.";
+          return;
+        }
+        musicEmbed.src = "about:blank";
+        musicEmbed.hidden = true;
+        musicAudio.hidden = false;
+        showFullTrackButton.textContent = "Full-length in Apple Music";
+        document.body.classList.remove("has-full-track");
+        musicStatus.textContent = "Audio preview ready. Press play in the player below.";
+      });
+
+      musicAudio.addEventListener("error", function () {
+        if (!musicAudio.hidden) {
+          musicStatus.textContent = "This audio preview could not be loaded. Try another song or use Apple Music for full-length playback.";
+        }
+      });
+
+      createPlaylistForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        var name = playlistNameInput.value.trim();
+        if (!name) {
+          playlistNameInput.focus();
+          return;
+        }
+        if (hasInappropriateText(name)) {
+          musicLibraryStatus.textContent = "Choose a family-friendly playlist name.";
+          playlistNameInput.select();
+          return;
+        }
+        if (musicData.playlists.some(function (playlist) {
+          return playlist.name.toLowerCase() === name.toLowerCase();
+        })) {
+          musicLibraryStatus.textContent = "A playlist with that name already exists.";
+          playlistNameInput.focus();
+          return;
+        }
+        var playlistId = "playlist-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+        musicData.playlists.push({ id: playlistId, name: name, tracks: [] });
+        activeMusicCollectionId = playlistId;
+        musicLibraryStatus.textContent = "Playlist created.";
+        if (saveMusicData()) {
+          event.target.reset();
+          renderMusicCollections();
+          playlistTargetSelect.value = playlistId;
+        }
+      });
+
+      musicSearchForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        var term = musicSearchInput.value.trim();
+        if (!term) {
+          musicSearchInput.focus();
+          return;
+        }
+        if (hasInappropriateText(term)) {
+          musicResults.replaceChildren();
+          musicSearchInput.value = "";
+          updateMusicRecommendationVisibility();
+          musicStatus.textContent = "Try a family-friendly song, artist, or album search.";
+          return;
+        }
+        updateMusicRecommendationVisibility();
+        var requestId = ++musicSearchId;
+        musicSearchButton.disabled = true;
+        musicResults.replaceChildren();
+        musicStatus.textContent = "Searching the music catalog...";
+        searchAppleMusic(term).then(function (tracks) {
+          if (requestId !== musicSearchId) return;
+          renderMusicResults(tracks, musicResults, musicStatus);
+        }).catch(function () {
+          if (requestId === musicSearchId) {
+            musicStatus.textContent = "Music search is unavailable right now. Check your connection and try again.";
+          }
+        }).then(function () {
+          if (requestId === musicSearchId) musicSearchButton.disabled = false;
+        });
+      });
+
+      document.getElementById("search-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+        var query = document.getElementById("search-input").value.trim();
+        if (!query) {
+          document.getElementById("search-input").focus();
+          return;
+        }
+        var isUrl = /^(https?:\/\/|localhost(?::\d+)?(?:\/|$)|[\w-]+(?:\.[\w-]+)+(?::\d+)?(?:\/|$))/i.test(query);
+        var destination = isUrl
+          ? (query.match(/^https?:\/\//i) ? query : "https://" + query)
+          : "https://duckduckgo.com/?q=" + encodeURIComponent(query);
+        window.location.assign(destination);
+      });
+
+      var now = new Date();
+      var hour = now.getHours();
+      var greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+      document.getElementById("greeting").textContent = greeting;
+      document.getElementById("today").textContent = new Intl.DateTimeFormat(undefined, {
+        weekday: "long", month: "long", day: "numeric"
+      }).format(now);
+      renderGames();
+      renderMusicCollections();
+      renderFriends();
+      showPage(window.location.hash.slice(1) || "home");
+    }());
+  </script>
+</body>
+</html>
